@@ -1,3 +1,4 @@
+import com.beust.jcommander.JCommander;
 import com.graphhopper.jsprit.analysis.toolbox.GraphStreamViewer;
 import com.graphhopper.jsprit.analysis.toolbox.Plotter;
 import com.graphhopper.jsprit.core.algorithm.VehicleRoutingAlgorithm;
@@ -8,18 +9,36 @@ import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolutio
 import com.graphhopper.jsprit.core.reporting.SolutionPrinter;
 import com.graphhopper.jsprit.core.util.Solutions;
 import com.graphhopper.jsprit.io.problem.VrpXMLWriter;
+import params.ParamsParser;
 import vrpassembler.Assembler;
 
 import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) throws JAXBException {
 
 
-        Assembler assembler = new Assembler("/Users/sergeypanov/git/SNT-VRP/src/main/resources/solomon-1987-r1/R101_025.xml");
+        ParamsParser paramsParser = new ParamsParser();
+        JCommander jCommander = new JCommander(paramsParser, args);
+        jCommander.parse();
 
+        List<String> aux = Arrays.asList(paramsParser.getPath().split("/"));
+        String outputFile = aux.get(aux.size() - 1);
+
+        File dir = new File("output");
+
+        if (!dir.exists()){
+            System.out.println("Creating directory ./output");
+            boolean result = dir.mkdir();
+            if(result) System.out.println("./output created");
+        }
+
+        Assembler assembler = new Assembler(paramsParser.getPath());
 
         VehicleRoutingProblem.Builder vrpBuilder = VehicleRoutingProblem.Builder.newInstance();
 
@@ -37,7 +56,7 @@ public class Main {
 
         VehicleRoutingProblemSolution bestSolution = Solutions.bestOf(solutions);
 
-        new VrpXMLWriter(problem, solutions).write("output/problem-with-solution.xml");
+        new VrpXMLWriter(problem, solutions).write("output/"+ "result-" + outputFile);
 
         SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.VERBOSE);
 
@@ -46,9 +65,13 @@ public class Main {
          */
         new Plotter(problem,bestSolution).plot("output/plot.png","simple example");
 
-        /*
+
+        if (paramsParser.isVisualize()){
+                    /*
         render problem and solution with GraphStream
          */
-        new GraphStreamViewer(problem, bestSolution).labelWith(GraphStreamViewer.Label.ID).setRenderDelay(200).display();
+            new GraphStreamViewer(problem, bestSolution).labelWith(GraphStreamViewer.Label.ID).setRenderDelay(200).display();
+        }
+
     }
 }
