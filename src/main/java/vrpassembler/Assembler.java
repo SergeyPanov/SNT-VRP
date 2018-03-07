@@ -15,7 +15,6 @@ import model.VehicleProfile;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +29,7 @@ public class Assembler {
     public List<Service> getServices() {
         return services;
     }
+
 
     public List<Vehicle> getFleet() {
         return fleet;
@@ -71,14 +71,13 @@ public class Assembler {
                VehicleImpl.Builder vehicleBuilder = VehicleImpl.Builder
                        .newInstance("vehicle " +
                                vehicle.get().getType()
-                               + " id: " + vehicle.get().getId() + "_" + i);
+                               + " id: " + (vehicle.get().getId() + i) + " type: " + vp.getType());
                vehicleBuilder.setStartLocation(Location.newInstance(vehicle.get().getCx(), vehicle.get().getCy()));
                vehicleBuilder.setLatestArrival(vp.getMaxTravelTime());
                vehicleBuilder.setType(vehicleType);
 
                fleet.add(vehicleBuilder.build());
            }
-
        }
 
    }
