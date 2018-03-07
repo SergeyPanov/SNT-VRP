@@ -41,7 +41,7 @@ public class Main {
         return null;
     }
 
-    public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException, JAXBException {
+    public static void main(String[] args) throws JAXBException {
 
 
         Assembler assembler = new Assembler("/Users/sergeypanov/git/SNT-VRP/src/main/resources/solomon-1987-r1/R112_100.xml");
