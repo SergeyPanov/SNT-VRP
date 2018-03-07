@@ -8,43 +8,17 @@ import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolutio
 import com.graphhopper.jsprit.core.reporting.SolutionPrinter;
 import com.graphhopper.jsprit.core.util.Solutions;
 import com.graphhopper.jsprit.io.problem.VrpXMLWriter;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 import vrpassembler.Assembler;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.util.Collection;
 
 public class Main {
 
-
-    private static Node getNodeWithId(NodeList nodes, String id){
-
-        for (int i = 0; i < nodes.getLength(); i++) {
-            if (nodes.item(i).getAttributes().getNamedItem("id").getNodeValue().equals(id)){
-                return nodes.item(i);
-            }
-        }
-        return null;
-    }
-
-
-    private static Node getChildNode(NodeList list, String name){
-        for (int i = 0; i < list.getLength(); i++) {
-            if (list.item(i).getNodeName().equals(name)){
-                return list.item(i);
-            }
-        }
-        return null;
-    }
-
     public static void main(String[] args) throws JAXBException {
 
 
-        Assembler assembler = new Assembler("/Users/sergeypanov/git/SNT-VRP/src/main/resources/solomon-1987-r1/R112_100.xml");
+        Assembler assembler = new Assembler("/Users/sergeypanov/git/SNT-VRP/src/main/resources/solomon-1987-r1/R101_025.xml");
 
 
         VehicleRoutingProblem.Builder vrpBuilder = VehicleRoutingProblem.Builder.newInstance();
@@ -59,7 +33,7 @@ public class Main {
 
         VehicleRoutingAlgorithm algorithm = Jsprit.createAlgorithm(problem);
 
-        Collection solutions = algorithm.searchSolutions();
+        Collection<VehicleRoutingProblemSolution> solutions = algorithm.searchSolutions();
 
         VehicleRoutingProblemSolution bestSolution = Solutions.bestOf(solutions);
 

@@ -24,8 +24,8 @@ import java.util.Optional;
 public class Assembler {
 
     private Instance instance;
-    private List<Vehicle> fleet = new ArrayList<Vehicle>();
-    private List<Service> services = new ArrayList<Service>();
+    private List<Vehicle> fleet = new ArrayList<>();
+    private List<Service> services = new ArrayList<>();
 
     public List<Service> getServices() {
         return services;
@@ -75,7 +75,6 @@ public class Assembler {
                vehicleBuilder.setStartLocation(Location.newInstance(vehicle.get().getCx(), vehicle.get().getCy()));
                vehicleBuilder.setLatestArrival(vp.getMaxTravelTime());
                vehicleBuilder.setType(vehicleType);
-
 
                fleet.add(vehicleBuilder.build());
            }
