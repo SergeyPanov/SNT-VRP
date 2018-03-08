@@ -63,7 +63,7 @@ public class Main {
         /*
          * plot
          */
-        new Plotter(problem,bestSolution).plot("output/plot.png","simple example");
+        new Plotter(problem,bestSolution).plot("output/" + outputFile +".png","Solution");
 
 
         if (paramsParser.isVisualize()){

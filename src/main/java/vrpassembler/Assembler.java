@@ -71,7 +71,7 @@ public class Assembler {
                VehicleImpl.Builder vehicleBuilder = VehicleImpl.Builder
                        .newInstance("vehicle " +
                                vehicle.get().getType()
-                               + " id: " + (vehicle.get().getId() + i) + " type: " + vp.getType());
+                               + " id: " + (vehicle.get().getId() + i) + " depot: " + vp.getType());
                vehicleBuilder.setStartLocation(Location.newInstance(vehicle.get().getCx(), vehicle.get().getCy()));
                vehicleBuilder.setLatestArrival(vp.getMaxTravelTime());
                vehicleBuilder.setType(vehicleType);
@@ -98,7 +98,6 @@ public class Assembler {
                System.out.println("Service: " + rec.getId() + " was not found");
                continue;
            }
-
 
 
            sBuilder.setLocation(Location.newInstance(nd.get().getCx(), nd.get().getCy()));
