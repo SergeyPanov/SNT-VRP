@@ -1,21 +1,14 @@
 import com.beust.jcommander.JCommander;
-import com.graphhopper.jsprit.analysis.toolbox.GraphStreamViewer;
-import com.graphhopper.jsprit.analysis.toolbox.Plotter;
-import com.graphhopper.jsprit.core.algorithm.VehicleRoutingAlgorithm;
-import com.graphhopper.jsprit.core.algorithm.box.Jsprit;
-import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
-import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem.FleetSize;
-import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
-import com.graphhopper.jsprit.core.reporting.SolutionPrinter;
-import com.graphhopper.jsprit.core.util.Solutions;
-import com.graphhopper.jsprit.io.problem.VrpXMLWriter;
+import instance.Instance;
 import params.ParamsParser;
-import vrpassembler.Assembler;
+import tabu.Environment;
+import tabu.Solution;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class Main {
@@ -38,40 +31,18 @@ public class Main {
             if(result) System.out.println("./output created");
         }
 
-        Assembler assembler = new Assembler(paramsParser.getPath());
-
-        VehicleRoutingProblem.Builder vrpBuilder = VehicleRoutingProblem.Builder.newInstance();
-
-        vrpBuilder.setFleetSize(FleetSize.FINITE);
-
-        vrpBuilder.addAllVehicles(assembler.getFleet());
-
-        vrpBuilder.addAllJobs(assembler.getServices());
-
-        VehicleRoutingProblem problem = vrpBuilder.build();
-
-        VehicleRoutingAlgorithm algorithm = Jsprit.createAlgorithm(problem);
-
-        Collection<VehicleRoutingProblemSolution> solutions = algorithm.searchSolutions();
-
-        VehicleRoutingProblemSolution bestSolution = Solutions.bestOf(solutions);
-
-        new VrpXMLWriter(problem, solutions).write("output/"+ "result-" + outputFile);
-
-        SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.VERBOSE);
-
-        /*
-         * plot
-         */
-        new Plotter(problem,bestSolution).plot("output/" + outputFile +".png","Solution");
+        File file = new File(paramsParser.getPath());
+        JAXBContext jaxbContext = JAXBContext.newInstance(Instance.class);
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        Instance instance = (Instance) jaxbUnmarshaller.unmarshal(file);
 
 
-        if (paramsParser.isVisualize()){
-                    /*
-        render problem and solution with GraphStream
-         */
-            new GraphStreamViewer(problem, bestSolution).labelWith(GraphStreamViewer.Label.ID).setRenderDelay(200).display();
-        }
+        Environment environment = new Environment(instance);
+
+        Solution solution = new Solution(environment.getNumbOfCustomers(), environment.getFleetSize(), 100);
+        solution.tabuSearch(environment.getVertices(), 10, environment.getDistances(),300);
+        solution.print();
+
 
     }
 }
