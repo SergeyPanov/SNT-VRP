@@ -1,5 +1,7 @@
 package tabu;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 public class TabuList {
     private int tabuList[][];
 
@@ -13,6 +15,8 @@ public class TabuList {
             }
         }
     }
+
+    public void setupDelays(){}
 
     public boolean isInTabu(int i, int j){
         //Check if the move is a Tabu! - If it is Tabu break

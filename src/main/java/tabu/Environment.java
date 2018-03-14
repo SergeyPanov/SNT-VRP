@@ -68,10 +68,11 @@ public class Environment {
 
     private void setupVertexes(){
 
-        Optional<Node> depot = instance.getNetwork().getNodes().getNode().stream().filter(nd -> nd.getType().equals("0")).findFirst();
+        Optional<Node> depot = instance.getNetwork().getNodes().getNode().stream()
+                .filter(nd -> nd.getType().equals("0")).findFirst();
 
         assert depot.orElse(null) != null;
-        vertices[0] = new Vertex((int)depot.orElse(null).getCx(), (int)depot.orElse(null).getCy());   // Set depot
+        vertices[0] = new Vertex((int)depot.orElse(null).getCx(), (int)depot.orElse(null).getCy());
 
         // Setup customer's Vertexes
         IntStream.range(1, numbOfCustomers + 1).forEach(

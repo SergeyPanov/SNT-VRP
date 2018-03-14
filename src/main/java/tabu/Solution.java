@@ -21,10 +21,15 @@ public class Solution {
 
     public Solution(int CustNum, int VechNum, int VechCap) {
         this.fleetSize = VechNum;
+
         this.noOfCustomers = CustNum;
+
         this.cost = 0;
+
         fleet = new Vehicle[fleetSize];
+
         fleetForBestSolution = new Vehicle[fleetSize];
+
         tabu = new TabuList();
 
         for (int i = 0; i < fleetSize; i++) {
@@ -35,7 +40,8 @@ public class Solution {
 
 
     private void firstIteration(Vertex[] vertices, double[][] costMatrix) {
-        double Candcost, Endcost;
+        double Candcost, finalCost;
+
         int vechicleIndex = 0;
 
         while (Arrays.stream(vertices).filter(v -> !v.isDepot()).anyMatch(v -> !v.isRouted())) {
@@ -45,12 +51,16 @@ public class Solution {
             double mincost = Double.MAX_VALUE;
 
             if (fleet[vechicleIndex].getRoute().isEmpty()) {
+
                 fleet[vechicleIndex].addVertex(vertices[0]);
+
             }
             for (int i = 1; i <= noOfCustomers; i++) {
+
                 if (!vertices[i].isRouted()
                         && fleet[vechicleIndex]
                         .isFit(vertices[i].getDemand())) {
+
                     Candcost = costMatrix[fleet[vechicleIndex].getCurLocation()][i];
 
                     if (mincost > Candcost) {
@@ -66,10 +76,14 @@ public class Solution {
 
                 if (vechicleIndex + 1 < fleet.length) {
                     if (fleet[vechicleIndex].getCurLocation() != 0) { //End this route
-                        Endcost = costMatrix[fleet[vechicleIndex].getCurLocation()][0];
+
+                        finalCost = costMatrix[fleet[vechicleIndex].getCurLocation()][0];
+
                         fleet[vechicleIndex].addVertex(vertices[0]);
-                        this.cost += Endcost;
+
+                        this.cost += finalCost;
                     }
+
                     vechicleIndex = vechicleIndex + 1; //Go to next Vehicle
                 } else {//We DO NOT have any more vehicle to assign. The problem is unsolved under these parameters
                     System.err.println("It is impossible to resolve this problem with such conditions.");
@@ -77,13 +91,15 @@ public class Solution {
                 }
             } else {
                 fleet[vechicleIndex].addVertex(candidateVertex); //If a fitting Customer is Found
+                
                 vertices[serviceIndex].setRouted(true);
+                
                 this.cost += mincost;
             }
         }
-        Endcost = costMatrix[fleet[vechicleIndex].getCurLocation()][0];
+        finalCost = costMatrix[fleet[vechicleIndex].getCurLocation()][0];
         fleet[vechicleIndex].addVertex(vertices[0]);
-        this.cost += Endcost;
+        this.cost += finalCost;
     }
 
 
@@ -92,52 +108,55 @@ public class Solution {
         firstIteration(vertices, costMatrix);
 
         //We use 1-0 exchange move
-        ArrayList<Vertex> RouteFrom;
-        ArrayList<Vertex> RouteTo;
+        ArrayList<Vertex> routeFrom;
 
-        int MovingNodeDemand = 0;
+        ArrayList<Vertex> routeTo;
+
+        int mvNdDemand = 0;
 
         int vechicleIndexFrom, vechicleIndexTo;
-        double BestNcost, Neigthboorcost;
+        double bestCost, neightCost;
 
-        int SwapIndexA = -1, SwapIndexB = -1, SwapRouteFrom = -1, SwapRouteTo = -1;
+        int swapA = -1, swapB = -1, swapRtFrom = -1, swapRteTo = -1;
 
-        int DimensionCustomer = costMatrix[1].length;
+        int dimension = costMatrix[1].length;
 
-        tabu.setTabuList(new int[DimensionCustomer + 1][DimensionCustomer + 1]);
+        tabu.setTabuList(new int[dimension + 1][dimension + 1]);
 
         bestcost = this.cost; //Initial Solution cost
 
         for (int iteration = 0; iteration < numberOfIters; ++iteration) {
 
-            BestNcost = Double.MAX_VALUE;
+            bestCost = Double.MAX_VALUE;
 
             for (vechicleIndexFrom = 0; vechicleIndexFrom < this.fleet.length; vechicleIndexFrom++) {
-                RouteFrom = this.fleet[vechicleIndexFrom].getRoute();
+                
+                routeFrom = this.fleet[vechicleIndexFrom].getRoute();
 
-                for (int i = 1; i < RouteFrom.size() - 1; i++) { //Not possible to move depot!
+                for (int i = 1; i < routeFrom.size() - 1; i++) { //Not possible to move depot!
 
                     for (vechicleIndexTo = 0; vechicleIndexTo < this.fleet.length; vechicleIndexTo++) {
 
-                        RouteTo = this.fleet[vechicleIndexTo].getRoute();
+                        routeTo = this.fleet[vechicleIndexTo].getRoute();
 
                         for (int j = 0;
-                             j < RouteTo.size() - 1; j++) { //Not possible to move after last Depot!
+                             j < routeTo.size() - 1; j++) { //Not possible to move after last Depot!
 
-                            MovingNodeDemand = RouteFrom.get(i).getDemand();
+                            mvNdDemand = routeFrom.get(i).getDemand();
 
-                            if ((vechicleIndexFrom == vechicleIndexTo) || this.fleet[vechicleIndexTo].isFit(MovingNodeDemand)) {
+                            if ((vechicleIndexFrom == vechicleIndexTo) 
+                                    || this.fleet[vechicleIndexTo].isFit(mvNdDemand)) {
                                 //If we assign to a different route check capacity constrains
                                 //if in the new route is the same no need to check for capacity
 
                                 // Not a move that Changes solution cost
                                 if (!((vechicleIndexFrom == vechicleIndexTo) && ((j == i) || (j == i - 1)))) {
 
-                                    int routeFromStart = RouteFrom.get(i - 1).getId();
-                                    int routeFromEnd = RouteFrom.get(i).getId();
-                                    int routeFromStartNeigh = RouteFrom.get(i + 1).getId();
-                                    int routeToStart = RouteTo.get(j).getId();
-                                    int routeToEnd = RouteTo.get(j + 1).getId();
+                                    int routeFromStart = routeFrom.get(i - 1).getId();
+                                    int routeFromEnd = routeFrom.get(i).getId();
+                                    int routeFromStartNeigh = routeFrom.get(i + 1).getId();
+                                    int routeToStart = routeTo.get(j).getId();
+                                    int routeToEnd = routeTo.get(j + 1).getId();
 
                                     if (
                                             tabu.isInTabu(routeFromStart, routeFromStartNeigh) ||
@@ -147,7 +166,7 @@ public class Solution {
                                         break;
                                     }
 
-                                    Neigthboorcost =
+                                    neightCost =
                                             costMatrix[routeFromStart][routeFromStartNeigh]
                                                     + costMatrix[routeToStart][routeFromEnd]
                                                     + costMatrix[routeFromEnd][routeToEnd]
@@ -155,12 +174,12 @@ public class Solution {
                                                     - costMatrix[routeFromEnd][routeFromStartNeigh]
                                                     - costMatrix[routeToStart][routeToEnd];
 
-                                    if (Neigthboorcost < BestNcost) {
-                                        BestNcost = Neigthboorcost;
-                                        SwapIndexA = i;
-                                        SwapIndexB = j;
-                                        SwapRouteFrom = vechicleIndexFrom;
-                                        SwapRouteTo = vechicleIndexTo;
+                                    if (neightCost < bestCost) {
+                                        bestCost = neightCost;
+                                        swapA = i;
+                                        swapB = j;
+                                        swapRtFrom = vechicleIndexFrom;
+                                        swapRteTo = vechicleIndexTo;
                                     }
                                 }
                             }
@@ -172,48 +191,55 @@ public class Solution {
 
             tabu.decreaseTabu();
 
-            RouteFrom = this.fleet[SwapRouteFrom].getRoute();
-            RouteTo = this.fleet[SwapRouteTo].getRoute();
-            this.fleet[SwapRouteFrom].setRoute(null);
-            this.fleet[SwapRouteTo].setRoute(null);
+            routeFrom = this.fleet[swapRtFrom].getRoute();
+            routeTo = this.fleet[swapRteTo].getRoute();
+            this.fleet[swapRtFrom].setRoute(null);
+            this.fleet[swapRteTo].setRoute(null);
 
-            Vertex swapVertex = RouteFrom.get(SwapIndexA);
+            Vertex swapVertex = routeFrom.get(swapA);
 
-            int NodeIDBefore = RouteFrom.get(SwapIndexA - 1).getId();
-            int NodeIDAfter = RouteFrom.get(SwapIndexA + 1).getId();
-            int NodeID_F = RouteTo.get(SwapIndexB).getId();
-            int NodeID_G = RouteTo.get(SwapIndexB + 1).getId();
+            int ndIdBefore = routeFrom.get(swapA - 1).getId();
+            int ndIdAfter = routeFrom.get(swapA + 1).getId();
+            int ndIdF = routeTo.get(swapB).getId();
+            int ndIdG = routeTo.get(swapB + 1).getId();
 
-            Random TabuRan = new Random();
-            int RendomDelay1 = TabuRan.nextInt(20);
-            int RendomDelay2 = TabuRan.nextInt(20);
-            int RendomDelay3 = TabuRan.nextInt(20);
+            Random tbRandomChanger = new Random();
+            int delay1 = tbRandomChanger.nextInt(20);
+            int delay2 = tbRandomChanger.nextInt(20);
+            int delay3 = tbRandomChanger.nextInt(20);
 
-            tabu.getTabuList()[NodeIDBefore][swapVertex.getId()] = TABU_Horizon + RendomDelay1;
-            tabu.getTabuList()[swapVertex.getId()][NodeIDAfter] = TABU_Horizon + RendomDelay2;
-            tabu.getTabuList()[NodeID_F][NodeID_G] = TABU_Horizon + RendomDelay3;
+            tabu.getTabuList()[ndIdBefore][swapVertex.getId()] = TABU_Horizon + delay1;
+            tabu.getTabuList()[swapVertex.getId()][ndIdAfter] = TABU_Horizon + delay2;
+            tabu.getTabuList()[ndIdF][ndIdG] = TABU_Horizon + delay3;
 
-            RouteFrom.remove(SwapIndexA);
+            routeFrom.remove(swapA);
 
-            if (SwapRouteFrom == SwapRouteTo) {
-                if (SwapIndexA < SwapIndexB) {
-                    RouteTo.add(SwapIndexB, swapVertex);
+            if (swapRtFrom == swapRteTo) {
+                if (swapA < swapB) {
+                    routeTo.add(swapB, swapVertex);
                 } else {
-                    RouteTo.add(SwapIndexB + 1, swapVertex);
+                    routeTo.add(swapB + 1, swapVertex);
                 }
             } else {
-                RouteTo.add(SwapIndexB + 1, swapVertex);
+                routeTo.add(swapB + 1, swapVertex);
             }
 
 
-            this.fleet[SwapRouteFrom].setRoute(RouteFrom);
-            this.fleet[SwapRouteFrom].setLoad(this.fleet[SwapRouteFrom].getLoad() - MovingNodeDemand);
+            this.fleet[swapRtFrom]
+                    .setRoute(routeFrom);
+            
+            this.fleet[swapRtFrom]
+                    .setLoad(this.fleet[swapRtFrom].getLoad() - mvNdDemand);
 
-            this.fleet[SwapRouteTo].setRoute(RouteTo);
-            this.fleet[SwapRouteTo].setLoad(this.fleet[SwapRouteTo].getLoad() + MovingNodeDemand);
+            this.fleet[swapRteTo]
+                    .setRoute(routeTo);
+            
+            
+            this.fleet[swapRteTo]
+                    .setLoad(this.fleet[swapRteTo].getLoad() + mvNdDemand);
 
 
-            this.cost += BestNcost;
+            this.cost += bestCost;
 
             if (this.cost < bestcost) {
                 saveBestSolution();
@@ -237,7 +263,9 @@ public class Solution {
                 int RoutSize = fleet[j].getRoute().size();
 
                 for (int k = 0; k < RoutSize; k++) {
+
                     Vertex n = fleet[j].getRoute().get(k);
+
                     fleetForBestSolution[j].getRoute().add(n);
                 }
             }
@@ -246,13 +274,21 @@ public class Solution {
 
     public void print() {
         for (int j = 0; j < fleetSize; j++) {
+
             if (!fleet[j].getRoute().isEmpty()) {
+
                 System.out.print("Vehicle id: " + fleet[j].getId() + ":");
+
                 int RoutSize = fleet[j].getRoute().size();
+
                 for (int k = 0; k < RoutSize; k++) {
+
                     if (k == RoutSize - 1) {
+
                         System.out.print(fleet[j].getRoute().get(k).getId());
+
                     } else {
+
                         System.out.print(fleet[j].getRoute().get(k).getId() + "->");
                     }
                 }
