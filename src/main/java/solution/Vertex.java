@@ -1,4 +1,4 @@
-package tabu;
+package solution;
 
 public class Vertex {
 

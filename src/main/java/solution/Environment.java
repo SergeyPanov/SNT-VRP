@@ -1,4 +1,4 @@
-package tabu;
+package solution;
 
 import instance.Instance;
 import instance.Node;
@@ -12,6 +12,10 @@ public class Environment {
     private Vertex[] vertices;
     private double[][] costMatrix;
     private int capacity;
+
+    private final int DEPO = 0;
+
+    private double cost = 0;
 
     private Instance instance;
 
@@ -125,5 +129,17 @@ public class Environment {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public int getDEPO() {
+        return DEPO;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 }

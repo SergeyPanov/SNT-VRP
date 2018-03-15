@@ -1,6 +1,5 @@
-package tabu;
+package solution;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 public class TabuList {
     private int tabuList[][];

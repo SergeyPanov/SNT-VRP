@@ -1,4 +1,4 @@
-package tabu;
+package solution;
 
 import java.util.ArrayList;
 

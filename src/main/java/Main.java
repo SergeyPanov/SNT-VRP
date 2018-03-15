@@ -1,8 +1,8 @@
 import com.beust.jcommander.JCommander;
 import instance.Instance;
 import params.ParamsParser;
-import tabu.Environment;
-import tabu.Solution;
+import solution.Environment;
+import solution.Solution;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -39,9 +39,8 @@ public class Main {
         Environment environment = new Environment(instance);
 
         Solution solution = new Solution(environment);
-        solution.tabuSearch(environment.getVertices(), 10, environment.getCostMatrix(),300);
-        solution.print();
-
+        solution.tabuSearch( 10, 300);
+        solution.printBestRoute();
 
     }
 }
