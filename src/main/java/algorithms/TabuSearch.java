@@ -7,7 +7,6 @@ import solution.Vertex;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 public class TabuSearch implements Algorithm {
@@ -15,7 +14,13 @@ public class TabuSearch implements Algorithm {
     private int numberOfIters;
     private int horizon;
 
-    private double bestcost;
+    private Environment environment;
+    private double totalBestCost;
+
+    // Class variables to simplify some methods
+    private int mvNdDemand = 0;
+    private int swapA = -1, swapB = -1, swapRtFrom = -1, swapRtTo = -1;
+
 
     public TabuSearch(TabuList tabu, int numberOfIters, int horizon) {
         this.tabu = tabu;
@@ -23,120 +28,146 @@ public class TabuSearch implements Algorithm {
         this.horizon = horizon;
     }
 
-    @Override
-    public Environment execute(Environment environment) {
-        ArrayList<Vertex> routeFrom;
-
-        ArrayList<Vertex> routeTo;
-
-        int mvNdDemand = 0;
-
-        int vechicleIndexFrom, vechicleIndexTo;
-        double bestCost, neightCost;
-
-        int swapA = -1, swapB = -1, swapRtFrom = -1, swapRteTo = -1;
-
-        int dimension = environment.getCostMatrix()[1].length;
-
-        tabu.setTabuList(new int[dimension + 1][dimension + 1]);
-
-        bestcost = environment.getCost(); //Initial Solution cost
-
-        for (int iteration = 0; iteration < numberOfIters; ++iteration) {
-
-            bestCost = Double.MAX_VALUE;
-
-            for (vechicleIndexFrom = 0; vechicleIndexFrom < environment.getFleet().size(); vechicleIndexFrom++) {
+    private boolean checkTabu(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
+        int routeFromStart = routeFrom.get(i - 1).getId();
+        int routeFromEnd = routeFrom.get(i).getId();
+        int routeFromStartNeigh = routeFrom.get(i + 1).getId();
+        int routeToStart = routeTo.get(j).getId();
+        int routeToEnd = routeTo.get(j + 1).getId();
 
 
-                routeFrom = environment.getFleet().get(vechicleIndexFrom).getRoute();
+        return  tabu.isInTabu(routeFromStart, routeFromStartNeigh) ||
+                tabu.isInTabu(routeToStart, routeFromEnd) ||
+                tabu.isInTabu(routeFromEnd, routeToEnd);
+    }
+
+    private  double getNeighbourCost(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
+
+        int routeFromStart = routeFrom.get(i - 1).getId();
+        int routeFromEnd = routeFrom.get(i).getId();
+        int routeFromStartNeigh = routeFrom.get(i + 1).getId();
+        int routeToStart = routeTo.get(j).getId();
+        int routeToEnd = routeTo.get(j + 1).getId();
+
+        return environment.getCostMatrix()[routeFromStart][routeFromStartNeigh]
+                + environment.getCostMatrix()[routeToStart][routeFromEnd]
+                + environment.getCostMatrix()[routeFromEnd][routeToEnd]
+                - environment.getCostMatrix()[routeFromStart][routeFromEnd]
+                - environment.getCostMatrix()[routeFromEnd][routeFromStartNeigh]
+                - environment.getCostMatrix()[routeToStart][routeToEnd];
+    }
 
 
-                for (int i = 1; i < routeFrom.size() - 1; i++) { //Not possible to move depot!
+    private void changeRoutes(ArrayList<Vertex> routeFrom,
+                              ArrayList<Vertex> routeTo,
+                              int swapRtFrom,
+                              int swapRtTo,
+                              int mvNdDemand
+                              ){
 
-                    for (vechicleIndexTo = 0; vechicleIndexTo < environment.getFleet().size(); vechicleIndexTo++) {
+        this.environment.getFleet().get(swapRtFrom)
+                .setRoute(routeFrom);
 
+        this.environment.getFleet().get(swapRtFrom)
+                .setLoad(this.environment.getFleet().get(swapRtFrom).getLoad() - mvNdDemand);
 
-                        routeTo = environment.getFleet().get(vechicleIndexTo).getRoute();
+        this.environment.getFleet().get(swapRtTo)
+                .setRoute(routeTo);
 
-
-                        for (int j = 0;
-                             j < routeTo.size() - 1; j++) { //Not possible to move after last Depot!
-
-                            mvNdDemand = routeFrom.get(i).getDemand();
-
-                            if ((vechicleIndexFrom == vechicleIndexTo)
-                                    || environment.getFleet().get(vechicleIndexTo).isFit(mvNdDemand)) {
-
-
-
-                                if (!((vechicleIndexFrom == vechicleIndexTo) && ((j == i) || (j == i - 1)))) {
-
-                                    int routeFromStart = routeFrom.get(i - 1).getId();
-                                    int routeFromEnd = routeFrom.get(i).getId();
-                                    int routeFromStartNeigh = routeFrom.get(i + 1).getId();
-                                    int routeToStart = routeTo.get(j).getId();
-                                    int routeToEnd = routeTo.get(j + 1).getId();
-
-                                    if (
-                                            tabu.isInTabu(routeFromStart, routeFromStartNeigh) ||
-                                                    tabu.isInTabu(routeToStart, routeFromEnd) ||
-                                                    tabu.isInTabu(routeFromEnd, routeToEnd)
-                                            ){
-                                        break;
-                                    }
-
-                                    neightCost =
-                                            environment.getCostMatrix()[routeFromStart][routeFromStartNeigh]
-                                                    + environment.getCostMatrix()[routeToStart][routeFromEnd]
-                                                    + environment.getCostMatrix()[routeFromEnd][routeToEnd]
-                                                    - environment.getCostMatrix()[routeFromStart][routeFromEnd]
-                                                    - environment.getCostMatrix()[routeFromEnd][routeFromStartNeigh]
-                                                    - environment.getCostMatrix()[routeToStart][routeToEnd];
+        this.environment.getFleet().get(swapRtTo)
+                .setLoad(this.environment.getFleet().get(swapRtTo).getLoad() + mvNdDemand);
+    }
 
 
-                                    if (neightCost < bestCost) {
-                                        bestCost = neightCost;
-                                        swapA = i;
-                                        swapB = j;
-                                        swapRtFrom = vechicleIndexFrom;
-                                        swapRteTo = vechicleIndexTo;
-                                    }
-                                }
-                            }
+
+    private double innerIteration(ArrayList<Vertex> routeFrom,
+                                int i,
+                                int vechicleIndexFrom,
+                                double bestCostOfIteration
+                                ){
+        for (int vechicleIndexTo = 0; vechicleIndexTo < this.environment.getFleet().size(); vechicleIndexTo++) {
+
+            ArrayList<Vertex> routeTo = this.environment.getFleet().get(vechicleIndexTo).getRoute();
+
+            for (int j = 0;
+                 j < routeTo.size() - 1; j++) { //Not possible to move after last Depot!
+
+                mvNdDemand = routeFrom.get(i).getDemand();
+
+                if ((vechicleIndexFrom == vechicleIndexTo)
+                        || this.environment.getFleet().get(vechicleIndexTo).isFit(mvNdDemand)) {
+
+
+                    if (!((vechicleIndexFrom == vechicleIndexTo) && ((j == i) || (j == i - 1)))) {
+
+                        if (checkTabu(routeFrom, routeTo, i, j)){
+                            break;
+                        }
+
+                        double neightCost = getNeighbourCost(routeFrom, routeTo, i, j);
+
+                        if (neightCost < bestCostOfIteration) {
+                            bestCostOfIteration = neightCost;
+                            swapA = i;
+                            swapB = j;
+                            swapRtFrom = vechicleIndexFrom;
+                            swapRtTo = vechicleIndexTo;
                         }
                     }
                 }
+            }
+        }
+
+        return bestCostOfIteration;
+    }
+
+    private double singleIteration(double bestCostOfIteration){
+        for (int vechicleIndexFrom = 0; vechicleIndexFrom < this.environment.getFleet().size(); vechicleIndexFrom++) {
+
+            ArrayList<Vertex> routeFrom = this.environment.getFleet().get(vechicleIndexFrom).getRoute();
+
+            for (int i = 1; i < routeFrom.size() - 1; i++) { //Not possible to move depot!
+
+                bestCostOfIteration = innerIteration(routeFrom, i, vechicleIndexFrom, bestCostOfIteration);
 
             }
+        }
+        return bestCostOfIteration;
+    }
 
-            tabu.decreaseTabu();
+    @Override
+    public Environment execute(Environment environment) {
 
-            routeFrom = environment.getFleet().get(swapRtFrom).getRoute();
-            routeTo = environment.getFleet().get(swapRteTo).getRoute();
-            environment.getFleet().get(swapRtFrom).setRoute(null);
-            environment.getFleet().get(swapRteTo).setRoute(null);
+        this.environment = environment;
 
+        tabu.setTabuList(new int[this.environment.getCostMatrix()[1].length + 1][this.environment.getCostMatrix()[1].length + 1]);
+
+        totalBestCost = this.environment.getCost();
+
+        // Certain amount of iterations
+        for (int iteration = 0; iteration < numberOfIters; ++iteration) {
+
+            ArrayList<Vertex> routeFrom;
+
+            ArrayList<Vertex> routeTo;
+
+            double bestCostOfIteration = this.singleIteration(Double.MAX_VALUE);    // Execute single iteration of algorithm
+
+            tabu.decreaseTabu();    // Each iteration decrease value in tabu-list
+
+            routeFrom = this.environment.getFleet().get(swapRtFrom).getRoute(); // Just alias for convenience
+            routeTo = this.environment.getFleet().get(swapRtTo).getRoute(); // Just alias for convenience
+
+            this.environment.getFleet().get(swapRtFrom).setRoute(null);
+            this.environment.getFleet().get(swapRtTo).setRoute(null);
 
             Vertex swapVertex = routeFrom.get(swapA);
 
-            int ndIdBefore = routeFrom.get(swapA - 1).getId();
-            int ndIdAfter = routeFrom.get(swapA + 1).getId();
-            int ndIdF = routeTo.get(swapB).getId();
-            int ndIdG = routeTo.get(swapB + 1).getId();
-
-            Random tbRandomChanger = new Random();
-            int delay1 = tbRandomChanger.nextInt(20);
-            int delay2 = tbRandomChanger.nextInt(20);
-            int delay3 = tbRandomChanger.nextInt(20);
-
-            tabu.getTabuList()[ndIdBefore][swapVertex.getId()] = horizon + delay1;
-            tabu.getTabuList()[swapVertex.getId()][ndIdAfter] = horizon + delay2;
-            tabu.getTabuList()[ndIdF][ndIdG] = horizon + delay3;
-
+            tabu.setupDelays(routeFrom, routeTo, swapA, swapB, horizon);
+            
             routeFrom.remove(swapA);
 
-            if (swapRtFrom == swapRteTo) {
+            if (swapRtFrom == swapRtTo) {
                 if (swapA < swapB) {
                     routeTo.add(swapB, swapVertex);
                 } else {
@@ -146,36 +177,25 @@ public class TabuSearch implements Algorithm {
                 routeTo.add(swapB + 1, swapVertex);
             }
 
+            changeRoutes(routeFrom, routeTo, swapRtFrom, swapRtTo, mvNdDemand);
 
-            environment.getFleet().get(swapRtFrom)
-                    .setRoute(routeFrom);
+            this.environment.setCost(this.environment.getCost() + bestCostOfIteration);
 
-            environment.getFleet().get(swapRtFrom)
-                    .setLoad(environment.getFleet().get(swapRtFrom).getLoad() - mvNdDemand);
-
-            environment.getFleet().get(swapRteTo)
-                    .setRoute(routeTo);
-
-            environment.getFleet().get(swapRteTo)
-                    .setLoad(environment.getFleet().get(swapRteTo).getLoad() + mvNdDemand);
-
-            environment.setCost(environment.getCost() + bestCost);
-
-            if (environment.getCost() < bestcost) {
-                saveBestSolution(environment);
+            if (this.environment.getCost() < totalBestCost) {
+                saveBestSolution(this.environment);
             }
         }
-        environment.setFleet(environment.getBestFleet());
+        this.environment.setFleet(this.environment.getBestFleet());
 
-        environment.setCost(bestcost);
+        this.environment.setCost(totalBestCost);
 
-        return environment;
+        return this.environment;
     }
 
     private void saveBestSolution(Environment environment) {
 
         Set<Vehicle> bestFleet = new HashSet<>();
-        bestcost = environment.getCost();
+        totalBestCost = environment.getCost();
         for (int i = 0; i < environment.getFleet().size(); i++) {
 
             if (!environment.getFleet().get(i).getRoute().isEmpty()) {

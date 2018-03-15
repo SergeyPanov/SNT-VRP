@@ -6,25 +6,16 @@ import algorithms.TabuSearch;
 import java.util.*;
 
 public class Solution {
-    private final int DEPO = 0;
-
-    private double cost;
 
 
     private Environment environment;
     private TabuList tabu;
 
 
-    private double bestcost;
-
 
     public Solution(Environment environment) {
-
         this.environment = environment;
-        this.cost = 0;
-
         tabu = new TabuList();
-
     }
 
 
