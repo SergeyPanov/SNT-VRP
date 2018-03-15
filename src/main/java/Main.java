@@ -36,11 +36,10 @@ public class Main {
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         Instance instance = (Instance) jaxbUnmarshaller.unmarshal(file);
 
-
         Environment environment = new Environment(instance);
 
-        Solution solution = new Solution(environment.getNumbOfCustomers(), environment.getFleetSize(), 100);
-        solution.tabuSearch(environment.getVertices(), 10, environment.getDistances(),300);
+        Solution solution = new Solution(environment);
+        solution.tabuSearch(environment.getVertices(), 10, environment.getCostMatrix(),300);
         solution.print();
 
 

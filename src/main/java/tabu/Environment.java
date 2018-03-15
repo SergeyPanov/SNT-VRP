@@ -3,31 +3,27 @@ package tabu;
 import instance.Instance;
 import instance.Node;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class Environment {
-    private Vehicle[] fleet;
-    private Vehicle[] bestFleet;
+    private List<Vehicle> fleet = new ArrayList<>();
+    private List<Vehicle> bestFleet = new ArrayList<>();
     private Vertex[] vertices;
-    private double[][] distances;
+    private double[][] costMatrix;
+    private int capacity;
 
     private Instance instance;
 
 
-    private int fleetSize;
     private int numbOfCustomers;
 
     public Environment(Instance instance) {
 
         this.instance = instance;
 
-        this.fleetSize = instance.getFleet().getProfiles().stream()
-                .filter(fl -> fl.getType().equals("0"))
-                .findFirst()
-                .get()
-                .getNumber();
+        this.capacity = (int) instance.getFleet().getProfiles().stream()
+                .filter(vehicleProfile -> vehicleProfile.getType().equals("0")).findFirst().get().getCapacity();
 
         this.numbOfCustomers = instance.getNetwork().getNodes().getNode().size() - 1;
 
@@ -37,7 +33,7 @@ public class Environment {
     private void setupEnvironment(){
 
         vertices = new Vertex[ instance.getNetwork().getNodes().getNode().size()];
-        distances = new double[numbOfCustomers + 1][numbOfCustomers + 1];
+        costMatrix = new double[numbOfCustomers + 1][numbOfCustomers + 1];
 
         setupVertexes();
         setupDistances();
@@ -50,7 +46,7 @@ public class Environment {
 
         for (int i = 0; i <= numbOfCustomers; i++) {
             //The table is summetric to the first diagonal
-            for (int j = i + 1; j <= numbOfCustomers; j++) { //Use this to compute distances in O(n/2)
+            for (int j = i + 1; j <= numbOfCustomers; j++) { //Use this to compute costMatrix in O(n/2)
 
                 double distance = Math.sqrt(
                         (Math.pow((vertices[i].getoX() - vertices[j].getoY()), 2))
@@ -59,8 +55,8 @@ public class Environment {
                 distance = Math.round(distance); //Distance is Casted in Integer
                 //distance = Math.round(distance*100.0)/100.0; //Distance in double
 
-                distances[i][j] = distance;
-                distances[j][i] = distance;
+                costMatrix[i][j] = distance;
+                costMatrix[j][i] = distance;
             }
         }
 
@@ -89,17 +85,15 @@ public class Environment {
     }
 
 
+    public double[][] getCostMatrix() {
+        return costMatrix;
+    }
+
     public int getNumbOfCustomers() {
         return numbOfCustomers;
     }
 
-    public Vehicle[] getFleet() {
-        return fleet;
-    }
 
-    public void setFleet(Vehicle[] fleet) {
-        this.fleet = fleet;
-    }
 
     public Vertex[] getVertices() {
         return vertices;
@@ -109,19 +103,27 @@ public class Environment {
         this.vertices = vertices;
     }
 
-    public double[][] getDistances() {
-        return distances;
+    public List<Vehicle> getFleet() {
+        return fleet;
     }
 
-    public void setDistances(double[][] distances) {
-        this.distances = distances;
+    public void setFleet(List<Vehicle> fleet) {
+        this.fleet = fleet;
     }
 
-    public int getFleetSize() {
-        return fleetSize;
+    public List<Vehicle> getBestFleet() {
+        return bestFleet;
     }
 
-    public void setFleetSize(int fleetSize) {
-        this.fleetSize = fleetSize;
+    public void setBestFleet(List<Vehicle> bestFleet) {
+        this.bestFleet = bestFleet;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 }
