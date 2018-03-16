@@ -76,7 +76,7 @@ public class Environment {
                         (int) instance.getNetwork().getNodes().getNode().get(i).getCx(),
                         (int) instance.getNetwork().getNodes().getNode().get(i).getCy(),
                         (int) Objects.requireNonNull(instance.getRequests().getRequest().stream()
-                                .filter(request -> request.getId() == i)
+                                .filter(request -> (request.getNode() == i) || (request.getId() == i))
                                 .findFirst()
                                 .orElse(null))
                                 .getQuantity() //Random Demand
