@@ -46,18 +46,14 @@ public class Environment {
 
     private void setupDistances(){
 
-
-
         for (int i = 0; i <= numbOfCustomers; i++) {
-            //The table is summetric to the first diagonal
-            for (int j = i + 1; j <= numbOfCustomers; j++) { //Use this to compute costMatrix in O(n/2)
+            for (int j = i + 1; j <= numbOfCustomers; j++) {
 
                 double distance = Math.sqrt(
                         (Math.pow((vertices[i].getoX() - vertices[j].getoY()), 2))
                         + (Math.pow((vertices[i].getoY() - vertices[j].getoY()), 2)));
 
-                distance = Math.round(distance); //Distance is Casted in Integer
-                //distance = Math.round(distance*100.0)/100.0; //Distance in double
+                distance = Math.round(distance);
 
                 costMatrix[i][j] = distance;
                 costMatrix[j][i] = distance;

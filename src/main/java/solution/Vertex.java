@@ -3,20 +3,20 @@ package solution;
 public class Vertex {
 
     private int id;
-    private int oX; //Vertex Coordinates
+    private int oX;
     private int oY;
-    private int demand; //Vertex Demand if Customer
+    private int demand;
     private boolean isRouted;
-    private boolean isDepot; //True if it Depot Vertex
+    private boolean isDepot;
 
-    public Vertex(int dOX, int dOY) {
+    Vertex(int dOX, int dOY) {
         this.id = 0;
         this.oX = dOX;
         this.oY = dOY;
         this.isDepot= true;
     }
 
-    public Vertex(int id, int x, int y, int demand) {
+    Vertex(int id, int x, int y, int demand) {
         this.id = id;
         this.oX = x;
         this.oY = y;

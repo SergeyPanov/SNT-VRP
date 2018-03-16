@@ -6,17 +6,13 @@ public class Vehicle {
     private int id;
     private ArrayList<Vertex> route = new ArrayList<>();
     private int capacity;
-    private int load;
-    private int curLocation;
-    private boolean isClosed;
+    private int load = 0;
+    private int curLocation = 0;
+    private boolean isClosed = false;
 
     public Vehicle(int id, int cap) {
         this.id = id;
         this.capacity = cap;
-        this.load = 0;
-        this.curLocation = 0; //In depot Initially
-        this.isClosed = false;
-        this.route.clear();
     }
 
     public void addVertex(Vertex customer) {
