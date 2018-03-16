@@ -58,8 +58,8 @@ public class Vertex {
         this.demand = demand;
     }
 
-    public boolean isRouted() {
-        return isRouted;
+    public boolean isNotRouted() {
+        return !isRouted;
     }
 
     public void setRouted(boolean routed) {

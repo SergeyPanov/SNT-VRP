@@ -13,7 +13,7 @@ public class GreedySearch implements Algorithm {
 
         int vechicleIndex = 0;
 
-        while (Arrays.stream(environment.getVertices()).filter(v -> !v.isDepot()).anyMatch(v -> !v.isRouted())) {
+        while (Arrays.stream(environment.getVertices()).filter(v -> !v.isDepot()).anyMatch(v -> v.isNotRouted())) {
 
             int serviceIndex = 0;
             Vertex candidateVertex = null;
@@ -29,7 +29,7 @@ public class GreedySearch implements Algorithm {
 
             for (int i = 1; i <= environment.getNumbOfCustomers(); i++) {
 
-                if (!environment.getVertices()[i].isRouted()
+                if (environment.getVertices()[i].isNotRouted()
 
                         && environment.getFleet().get(vechicleIndex)
                         .isFit(environment.getVertices()[i].getDemand())) {
