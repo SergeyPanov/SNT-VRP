@@ -13,7 +13,7 @@ public class GreedySearch implements Algorithm {
 
         int vechicleIndex = 0;
 
-        while (Arrays.stream(environment.getVertices()).filter(v -> !v.isDepot()).anyMatch(v -> v.isNotRouted())) {
+        while (Arrays.stream(environment.getVertices()).filter(v -> !v.isDepot()).anyMatch(Vertex::isNotRouted)) {
 
             int serviceIndex = 0;
             Vertex candidateVertex = null;

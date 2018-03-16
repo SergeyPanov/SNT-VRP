@@ -135,6 +135,14 @@ public class TabuSearch implements Algorithm {
         return bestCostOfIteration;
     }
 
+    private void swapRoutes(ArrayList<Vertex> routeTo, Vertex swapVertex){
+        if (swapA < swapB) {
+            routeTo.add(swapB, swapVertex);
+        } else {
+            routeTo.add(swapB + 1, swapVertex);
+        }
+    }
+
     @Override
     public Environment execute(Environment environment) {
 
@@ -168,11 +176,7 @@ public class TabuSearch implements Algorithm {
             routeFrom.remove(swapA);
 
             if (swapRtFrom == swapRtTo) {
-                if (swapA < swapB) {
-                    routeTo.add(swapB, swapVertex);
-                } else {
-                    routeTo.add(swapB + 1, swapVertex);
-                }
+                swapRoutes(routeTo, swapVertex);
             } else {
                 routeTo.add(swapB + 1, swapVertex);
             }
