@@ -30,7 +30,6 @@ public class GreedySearch implements Algorithm {
             for (int i = 1; i <= environment.getNumbOfCustomers(); i++) {
 
                 if (environment.getVertices()[i].isNotRouted()
-
                         && environment.getFleet().get(vechicleIndex)
                         .isFit(environment.getVertices()[i].getDemand())) {
 
@@ -44,19 +43,13 @@ public class GreedySearch implements Algorithm {
                 }
             }
 
-
             if (candidateVertex == null) {
 
                 if (environment.getFleet().get(vechicleIndex).getCurLocation() != 0) { //End this route
-
                     finalCost = environment.getCostMatrix()[environment.getFleet().get(vechicleIndex).getCurLocation()][environment.getDEPO()];
-
                     environment.getFleet().get(vechicleIndex).addVertex(environment.getVertices()[environment.getDEPO()]);
-
                     environment.setCost(environment.getCost() + finalCost);
-
                 }
-
                 vechicleIndex = vechicleIndex + 1; //Go to next Vehicle
 
             } else {

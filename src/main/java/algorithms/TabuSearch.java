@@ -94,8 +94,7 @@ public class TabuSearch implements Algorithm {
 
                 mvNdDemand = routeFrom.get(i).getDemand();
 
-                if ((vechicleIndexFrom == vechicleIndexTo)
-                        || this.environment.getFleet().get(vechicleIndexTo).isFit(mvNdDemand)) {
+                if (this.environment.getFleet().get(vechicleIndexTo).isFit(mvNdDemand)) {
 
 
                     if (!((vechicleIndexFrom == vechicleIndexTo) && ((j == i) || (j == i - 1)))) {
@@ -166,8 +165,8 @@ public class TabuSearch implements Algorithm {
             routeFrom = this.environment.getFleet().get(swapRtFrom).getRoute(); // Just alias for convenience
             routeTo = this.environment.getFleet().get(swapRtTo).getRoute(); // Just alias for convenience
 
-            this.environment.getFleet().get(swapRtFrom).setRoute(null);
-            this.environment.getFleet().get(swapRtTo).setRoute(null);
+            this.environment.getFleet().get(swapRtFrom).setRoute(new ArrayList<>());
+            this.environment.getFleet().get(swapRtTo).setRoute(new ArrayList<>());
 
             Vertex swapVertex = routeFrom.get(swapA);
 
