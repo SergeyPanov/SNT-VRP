@@ -153,8 +153,7 @@ public class TabuSearch implements Algorithm {
         tabu.setTabuList(new int[this.environment.getCostMatrix()[1].length + 1][this.environment.getCostMatrix()[1].length + 1]);
 
         totalBestCost = this.environment.getCost();
-
-        // Certain amount of iterations
+        
         for (int iteration = 0; iteration < numberOfIters; ++iteration) {
 
             ArrayList<Vertex> routeFrom;
@@ -189,7 +188,9 @@ public class TabuSearch implements Algorithm {
             if (this.environment.getCost() < totalBestCost) {
                 saveBestSolution(this.environment);
             }
+
         }
+
         this.environment.setFleet(this.environment.getBestFleet());
 
         this.environment.setCost(totalBestCost);
