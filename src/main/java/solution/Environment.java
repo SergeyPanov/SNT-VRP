@@ -50,7 +50,7 @@ public class Environment {
             for (int j = i + 1; j <= numbOfCustomers; j++) {
 
                 double distance = Math.sqrt(
-                        (Math.pow((vertices[i].getoX() - vertices[j].getoY()), 2))
+                        (Math.pow((vertices[i].getoX() - vertices[j].getoX()), 2))
                         + (Math.pow((vertices[i].getoY() - vertices[j].getoY()), 2)));
 
                 distance = Math.round(distance);

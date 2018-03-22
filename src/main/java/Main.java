@@ -39,7 +39,7 @@ public class Main {
         Environment environment = new Environment(instance);
 
         Solution solution = new Solution(environment);
-        solution.tabuSearch( 10, 300);
+        solution.tabuSearch( 0, 300);
         solution.printBestRoute();
 
     }

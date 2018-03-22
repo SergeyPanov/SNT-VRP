@@ -171,7 +171,7 @@ public class TabuSearch implements Algorithm {
 
             Vertex swapVertex = routeFrom.get(swapA);
 
-            tabu.setupDelays(routeFrom, routeTo, swapA, swapB, horizon);
+//            tabu.setupDelays(routeFrom, routeTo, swapA, swapB, horizon);
             
             routeFrom.remove(swapA);
 
