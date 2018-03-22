@@ -16,6 +16,7 @@ public class Main {
     public static void main(String[] args) throws JAXBException {
 
 
+
         ParamsParser paramsParser = new ParamsParser();
         JCommander jCommander = new JCommander(paramsParser, args);
         jCommander.parse();
@@ -23,13 +24,13 @@ public class Main {
         List<String> aux = Arrays.asList(paramsParser.getPath().split("/"));
         String outputFile = aux.get(aux.size() - 1);
 
-        File dir = new File("output");
-
-        if (!dir.exists()){
-            System.out.println("Creating directory ./output");
-            boolean result = dir.mkdir();
-            if(result) System.out.println("./output created");
-        }
+//        File dir = new File("output");
+//
+//        if (!dir.exists()){
+//            System.out.println("Creating directory ./output");
+//            boolean result = dir.mkdir();
+//            if(result) System.out.println("./output created");
+//        }
 
         File file = new File(paramsParser.getPath());
         JAXBContext jaxbContext = JAXBContext.newInstance(Instance.class);
@@ -38,8 +39,14 @@ public class Main {
 
         Environment environment = new Environment(instance);
 
+        if (paramsParser.isCompare()){
+            Solution solution = new Solution(environment);
+            solution.greedySearch();
+            solution.printBestRoute();
+        }
+
         Solution solution = new Solution(environment);
-        solution.tabuSearch( 0, 300);
+        solution.tabuSearch(  paramsParser.getIterations());
         solution.printBestRoute();
 
     }

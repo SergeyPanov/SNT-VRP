@@ -18,23 +18,27 @@ public class Solution {
         tabu = new TabuList();
     }
 
-
-    public void tabuSearch(int TABU_Horizon, int numberOfIters) {
-
+    public void greedySearch(){
         GreedySearch greedySearch = new GreedySearch();
         environment = greedySearch.execute(environment);
+    }
 
-        TabuSearch tabuSearch = new TabuSearch(tabu, numberOfIters, TABU_Horizon);
+
+    public void tabuSearch(int numberOfIters) {
+
+        greedySearch();
+
+        TabuSearch tabuSearch = new TabuSearch(tabu, numberOfIters);
         environment = tabuSearch.execute(environment);
 
     }
 
 
     public void printBestRoute() {
-        environment.getBestFleet()
+        environment.getFleet()
                 .sort(Comparator.comparing(Vehicle::getId));
 
-        environment.getBestFleet().forEach(v -> {
+        environment.getFleet().forEach(v -> {
             System.out.print("Vehicle: " + v.getId() + " route: ");
 
             System.out.print("(id: " + v.getRoute().get(0).getId()

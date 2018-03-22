@@ -71,7 +71,6 @@ public class GreedySearch implements Algorithm {
         environment.getFleet().get(vechicleIndex).addVertex(environment.getVertices()[environment.getDEPO()]);
         environment.setCost(environment.getCost() + finalCost);
 
-
         return environment;
     }
 }
