@@ -109,6 +109,7 @@ public class NovelAlgorithm implements Algorithm{
     @Override
     public Environment execute(Environment environment) {
         this.environment = environment;
+//        calculateTotalFitness();
 
         for (int i = 0; i < 200; i++) {
 
