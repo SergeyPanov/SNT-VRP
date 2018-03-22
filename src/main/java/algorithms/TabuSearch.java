@@ -12,6 +12,7 @@ import java.util.Set;
 public class TabuSearch implements Algorithm {
     private TabuList tabu;
     private int numberOfIters;
+    private int horizon;
 
 
     private Environment environment;
@@ -22,9 +23,10 @@ public class TabuSearch implements Algorithm {
     private int swapA = -1, swapB = -1, swapRtFrom = -1, swapRtTo = -1;
 
 
-    public TabuSearch(TabuList tabu, int numberOfIters) {
+    public TabuSearch(TabuList tabu, int numberOfIters, int horizon) {
         this.tabu = tabu;
         this.numberOfIters = numberOfIters;
+        this.horizon = horizon;
 
     }
 
@@ -171,7 +173,7 @@ public class TabuSearch implements Algorithm {
 
             Vertex swapVertex = routeFrom.get(swapA);
 
-            
+            tabu.setupDelays(routeFrom, routeTo, swapA, swapB, horizon);
             routeFrom.remove(swapA);
 
             if (swapRtFrom == swapRtTo) {

@@ -28,7 +28,7 @@ public class Solution {
 
         greedySearch();
 
-        TabuSearch tabuSearch = new TabuSearch(tabu, numberOfIters);
+        TabuSearch tabuSearch = new TabuSearch(tabu, numberOfIters, 10);
         environment = tabuSearch.execute(environment);
 
     }
