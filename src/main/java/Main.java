@@ -18,19 +18,7 @@ public class Main {
 
 
         ParamsParser paramsParser = new ParamsParser();
-        JCommander jCommander = new JCommander(paramsParser, args);
-        jCommander.parse();
-
-        List<String> aux = Arrays.asList(paramsParser.getPath().split("/"));
-        String outputFile = aux.get(aux.size() - 1);
-
-//        File dir = new File("output");
-//
-//        if (!dir.exists()){
-//            System.out.println("Creating directory ./output");
-//            boolean result = dir.mkdir();
-//            if(result) System.out.println("./output created");
-//        }
+        JCommander.newBuilder().addObject(paramsParser).build().parse(args);
 
         File file = new File(paramsParser.getPath());
         JAXBContext jaxbContext = JAXBContext.newInstance(Instance.class);
