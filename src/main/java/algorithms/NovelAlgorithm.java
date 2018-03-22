@@ -97,10 +97,10 @@ public class NovelAlgorithm implements Algorithm{
                 && !closest.isDepot()){
 
 
-            v1.get().setCapacity(v1.get().getCapacity() + (closest.getDemand() - chosen.getDemand()));
+            v1.get().setLoad(v1.get().getLoad() + (closest.getDemand() - chosen.getDemand()));
             v1.get().getRoute().set(vertexIndexA, closest);
 
-            v2.get().setCapacity(v2.get().getCapacity() + (chosen.getDemand() - closest.getDemand()));
+            v2.get().setLoad(v2.get().getLoad() + (chosen.getDemand() - closest.getDemand()));
             v2.get().getRoute().set(vertexIndexB, chosen);
         }
 
