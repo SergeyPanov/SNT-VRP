@@ -1,19 +1,39 @@
 package algorithms;
 
 import solution.Environment;
+import solution.TabuList;
 import solution.Vehicle;
 import solution.Vertex;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Random;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.*;
 
 public class NovelAlgorithm implements Algorithm{
 
     private Environment environment;
 
     private double totalFitness;
+    private double bestCost;
+
+    private TabuList tabu = new TabuList();
+
+    public static Object deepClone(Object object) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(object);
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return ois.readObject();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
     // Calculate fitness function for vehicle v
@@ -95,7 +115,9 @@ public class NovelAlgorithm implements Algorithm{
                 && v2.get().isFit(chosen.getDemand() - closest.getDemand() )
                 && !chosen.isDepot()
                 && !closest.isDepot()){
-
+//        if (!chosen.isDepot()
+//                && !closest.isDepot()){
+//
 
             v1.get().setLoad(v1.get().getLoad() + (closest.getDemand() - chosen.getDemand()));
             v1.get().getRoute().set(vertexIndexA, closest);
@@ -103,15 +125,18 @@ public class NovelAlgorithm implements Algorithm{
             v2.get().setLoad(v2.get().getLoad() + (chosen.getDemand() - closest.getDemand()));
             v2.get().getRoute().set(vertexIndexB, chosen);
         }
-
     }
+
 
     @Override
     public Environment execute(Environment environment) {
         this.environment = environment;
 //        calculateTotalFitness();
 
-        for (int i = 0; i < 200; i++) {
+        tabu.setTabuList(new int[this.environment.getCostMatrix()[1].length + 1][this.environment.getCostMatrix()[1].length + 1]);
+        saveBestSolution();
+        bestCost = environment.calculateRouteCost(environment.getFleet());
+        for (int i = 0; i < 1000; i++) {
 
             // Stage 1. Select one of each point i from each routes Rk* by roulette wheel principle
             ArrayList<Vertex> chosenVertexes = new ArrayList<>();
@@ -132,17 +157,37 @@ public class NovelAlgorithm implements Algorithm{
             // So we can prevent to enhance the solution space too much.
             for (Vehicle vehicle:
                  environment.getFleet()) {
-
                 for (int j = 0; j < chosenVertexes.size(); j++) {
-                    if (isOnTheRoad(vehicle, chosenVertexes.get(j)) && !isOnTheRoad(vehicle, closestVertexes.get(j))){
+//                    if (isOnTheRoad(vehicle, chosenVertexes.get(j)) && !isOnTheRoad(vehicle, closestVertexes.get(j))){
                         swapVertexes(chosenVertexes.get(j), closestVertexes.get(j));
-                    }
+//                    }
                 }
-
             }
-
-
+            if (bestCost > this.environment.calculateRouteCost(this.environment.getFleet())){
+                saveBestSolution();
+            }
         }
-        return environment;
+        this.environment.setCost(this.environment.calculateRouteCost(this.environment.getBestFleet()));
+        return this.environment;
+    }
+
+    private void saveBestSolution() {
+
+        ArrayList<Vehicle> bestFleet = new ArrayList<>();
+        bestCost = this.environment.calculateRouteCost(this.environment.getFleet());
+
+
+        for (int i = 0; i < environment.getFleet().size(); i++) {
+            ArrayList<Vertex> aux = new ArrayList<>(environment.getFleet().get(i).getRoute());
+
+            if (!environment.getFleet().get(i).getRoute().isEmpty()) {
+
+                Vehicle v = (Vehicle) deepClone(environment.getFleet().get(i));
+                v.setRoute(new ArrayList<>());
+                v.getRoute().addAll(aux);
+                bestFleet.add(v);
+            }
+        }
+        environment.setBestFleet(bestFleet);
     }
 }

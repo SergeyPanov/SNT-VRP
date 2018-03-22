@@ -1,8 +1,9 @@
 package solution;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Vehicle {
+public class Vehicle implements Serializable{
     private int id;
     private ArrayList<Vertex> route = new ArrayList<>();
     private int capacity;

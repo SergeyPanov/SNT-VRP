@@ -81,9 +81,23 @@ public class Environment {
                                 .orElse(null))
                                 .getQuantity() //Random Demand
                 ));
-
     }
 
+
+    public double calculateRouteCost(List<Vehicle> vehicles){
+        double cost = 0;
+
+        for (Vehicle vehicle:
+                vehicles) {
+
+            for (int i = 0; i < vehicle.getRoute().size()-1; i++) {
+                cost += costMatrix[vehicle.getRoute().get(i).getId()][vehicle.getRoute().get(i+1).getId()];
+            }
+
+        }
+
+        return cost;
+    }
 
     public double[][] getCostMatrix() {
         return costMatrix;

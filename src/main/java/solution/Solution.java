@@ -23,9 +23,10 @@ public class Solution {
     public void tabuSearch(int TABU_Horizon, int numberOfIters) {
         GreedySearch greedySearch = new GreedySearch();
         environment = greedySearch.execute(environment);
-        printBestRoute();
+//        printBestRoute();
         NovelAlgorithm novelAlgorithm = new NovelAlgorithm();
         environment = novelAlgorithm.execute(environment);
+        printBestRoute();
 //        TabuSearch tabuSearch = new TabuSearch(tabu, numberOfIters, TABU_Horizon);
 //        environment = tabuSearch.execute(environment);
 
@@ -33,10 +34,10 @@ public class Solution {
 
 
     public void printBestRoute() {
-        environment.getFleet()
+        environment.getBestFleet()
                 .sort(Comparator.comparing(Vehicle::getId));
 
-        environment.getFleet().forEach(v -> {
+        environment.getBestFleet().forEach(v -> {
             System.out.print("Vehicle: " + v.getId() + " route: " + " load: " +v.getLoad() );
 
             System.out.print("(id: " + v.getRoute().get(0).getId()

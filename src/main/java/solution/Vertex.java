@@ -1,6 +1,8 @@
 package solution;
 
-public class Vertex {
+import java.io.Serializable;
+
+public class Vertex implements Serializable {
 
     private int id;
     private int oX;
