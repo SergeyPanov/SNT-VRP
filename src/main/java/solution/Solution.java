@@ -33,7 +33,7 @@ public class Solution {
 
     public void tabuSearch(int numberOfIters) {
 
-        greedySearch();
+//        greedySearch();
 
         TabuSearch tabuSearch = new TabuSearch(tabu, numberOfIters, 10);
         environment = tabuSearch.execute(environment);

@@ -23,13 +23,12 @@ public class Main {
 
         Environment environment = new Environment(instance);
 
+        Solution solution = new Solution(environment);
+        solution.greedySearch();
         if (params.isCompare()){
-            Solution solution = new Solution(environment);
-            solution.greedySearch();
             solution.printBestRoute();
         }
 
-        Solution solution = new Solution(environment);
         solution.tabuSearch(  params.getIterations());
         solution.printBestRoute();
 
