@@ -19,12 +19,16 @@ public class Environment {
 
     private Instance instance;
 
+    private int allowedVehicleNumber = 0;
+
 
     private int numbOfCustomers;
 
     public Environment(Instance instance) {
 
         this.instance = instance;
+
+        this.allowedVehicleNumber = instance.getFleet().getProfiles().get(0).getNumber();
 
         this.capacity = (int) instance.getFleet().getProfiles().stream()
                 .filter(vehicleProfile -> vehicleProfile.getType().equals("0")).findFirst().get().getCapacity();
@@ -137,5 +141,13 @@ public class Environment {
 
     public void setCost(double cost) {
         this.cost = cost;
+    }
+
+    public int getAllowedVehicleNumber() {
+        return allowedVehicleNumber;
+    }
+
+    public void setAllowedVehicleNumber(int allowedVehicleNumber) {
+        this.allowedVehicleNumber = allowedVehicleNumber;
     }
 }

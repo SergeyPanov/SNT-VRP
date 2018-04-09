@@ -46,18 +46,24 @@ public class GreedySearch implements Algorithm {
 
 
             if (candidateVertex == null) {
+                if (vechicleIndex + 1 < environment.getAllowedVehicleNumber()){
 
-                if (environment.getFleet().get(vechicleIndex).getCurLocation() != 0) { //End this route
+                    if (environment.getFleet().get(vechicleIndex).getCurLocation() != 0) { //End this route
 
-                    finalCost = environment.getCostMatrix()[environment.getFleet().get(vechicleIndex).getCurLocation()][environment.getDEPO()];
+                        finalCost = environment.getCostMatrix()[environment.getFleet().get(vechicleIndex).getCurLocation()][environment.getDEPO()];
 
-                    environment.getFleet().get(vechicleIndex).addVertex(environment.getVertices()[environment.getDEPO()]);
+                        environment.getFleet().get(vechicleIndex).addVertex(environment.getVertices()[environment.getDEPO()]);
 
-                    environment.setCost(environment.getCost() + finalCost);
+                        environment.setCost(environment.getCost() + finalCost);
 
+                    }
+
+                    vechicleIndex = vechicleIndex + 1; //Go to next Vehicle
+                }else {
+                    System.out.println("\nThe rest customers do not fit in any Vehicle\n" +
+                            "The problem cannot be resolved under these constrains");
+                    System.exit(0);
                 }
-
-                vechicleIndex = vechicleIndex + 1; //Go to next Vehicle
 
             } else {
                 environment.getFleet().get(vechicleIndex).addVertex(candidateVertex); //If a fitting Customer is Found
