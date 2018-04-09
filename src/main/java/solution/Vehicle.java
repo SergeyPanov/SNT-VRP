@@ -2,6 +2,9 @@ package solution;
 
 import java.util.ArrayList;
 
+/**
+ * Class represents Vehicle
+ */
 public class Vehicle {
     private int id;
     private ArrayList<Vertex> route = new ArrayList<>();

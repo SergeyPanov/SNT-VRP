@@ -6,6 +6,11 @@ import solution.Vertex;
 
 import java.util.Arrays;
 
+/**
+ * Greedy search implementation.
+ * User as initial solution.
+ * Also used for comparison with Tabu Search
+ */
 public class GreedySearch implements Algorithm {
     @Override
     public Environment execute(Environment environment) {

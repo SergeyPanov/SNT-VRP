@@ -1,5 +1,8 @@
 package solution;
 
+/**
+ * Class represents Customer(Vertex)
+ */
 public class Vertex {
 
     private int id;

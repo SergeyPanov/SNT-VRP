@@ -8,6 +8,9 @@ public class TabuList {
     private int tabuList[][];
 
 
+    /**
+     * Decrease tabu list on each iteration
+     */
     public void decreaseTabu(){
         for (int i = 0; i < tabuList[0].length; i++) {
             for (int j = 0; j < tabuList[0].length; j++) {
@@ -16,6 +19,14 @@ public class TabuList {
         }
     }
 
+    /**
+     * Adjust delays
+     * @param routeFrom
+     * @param routeTo
+     * @param swapA
+     * @param swapB
+     * @param horizon
+     */
     public void setupDelays(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int swapA, int swapB, int horizon){
         Random tbRandomChanger = new Random();
         getTabuList()[routeFrom.get(swapA - 1).getId()][routeFrom.get(swapA).getId()] = horizon + tbRandomChanger.nextInt(5);
@@ -23,6 +34,12 @@ public class TabuList {
         getTabuList()[routeTo.get(swapB).getId()][routeTo.get(swapB + 1).getId()] = horizon + tbRandomChanger.nextInt(5);
     }
 
+    /**
+     * Check if vertex is in tabu list
+     * @param i
+     * @param j
+     * @return
+     */
     public boolean isInTabu(int i, int j){
         //Check if the move is a Tabu! - If it is Tabu break
         return tabuList[i][j] != 0;

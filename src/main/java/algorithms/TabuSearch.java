@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Tabu search implementation.
+ */
 public class TabuSearch implements Algorithm {
     private TabuList tabu;
     private int numberOfIters;
@@ -30,6 +33,14 @@ public class TabuSearch implements Algorithm {
 
     }
 
+    /**
+     * Check if Vertexes can be swap.
+     * @param routeFrom
+     * @param routeTo
+     * @param i
+     * @param j
+     * @return
+     */
     private boolean checkTabu(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
         int routeFromStart = routeFrom.get(i - 1).getId();
         int routeFromEnd = routeFrom.get(i).getId();
@@ -43,6 +54,14 @@ public class TabuSearch implements Algorithm {
                 tabu.isInTabu(routeFromEnd, routeToEnd);
     }
 
+    /**
+     * Get cost of neighbour solution.
+     * @param routeFrom
+     * @param routeTo
+     * @param i
+     * @param j
+     * @return
+     */
     private  double getNeighbourCost(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
 
         int routeFromStart = routeFrom.get(i - 1).getId();

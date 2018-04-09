@@ -6,6 +6,9 @@ import instance.Node;
 import java.util.*;
 import java.util.stream.IntStream;
 
+/**
+ * Class holds whole environment.
+ */
 public class Environment {
     private List<Vehicle> fleet = new ArrayList<>();
     private List<Vehicle> bestFleet = new ArrayList<>();
@@ -48,6 +51,9 @@ public class Environment {
 
     }
 
+    /**
+     * Fill matrix of distances.
+     */
     private void setupDistances(){
 
         for (int i = 0; i <= numbOfCustomers; i++) {
@@ -66,6 +72,9 @@ public class Environment {
 
     }
 
+    /**
+     * Based on instance create Vertexes.
+     */
     private void setupVertexes(){
 
         Optional<Node> depot = instance.getNetwork().getNodes().getNode().stream()
@@ -83,9 +92,8 @@ public class Environment {
                                 .filter(request -> (request.getNode() == i) || (request.getId() == i))
                                 .findFirst()
                                 .orElse(null))
-                                .getQuantity() //Random Demand
+                                .getQuantity()
                 ));
-
     }
 
 

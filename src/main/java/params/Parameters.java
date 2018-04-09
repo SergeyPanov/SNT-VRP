@@ -2,7 +2,9 @@ package params;
 
 import org.apache.commons.cli.*;
 
-
+/**
+ * Pars input parameters
+ */
 public class Parameters {
     private  Options options = new Options();
 
