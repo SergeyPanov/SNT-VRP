@@ -66,7 +66,7 @@ public class Solution {
         });
 
         System.out.println("\nTotal cost: " + environment.getCost());
-
     }
+
 
 }

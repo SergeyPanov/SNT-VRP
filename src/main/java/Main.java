@@ -33,5 +33,9 @@ public class Main {
         solution.tabuSearch(  params.getIterations());
         solution.printBestRoute();
 
+//        if (params.isGraph()){
+//            solution.plot();
+//        }
+
     }
 }

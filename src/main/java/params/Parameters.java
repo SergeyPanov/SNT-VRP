@@ -15,13 +15,17 @@ public class Parameters {
 
     private int iterations = 300;
 
+    private boolean isGraph;
+
 
 
     public Parameters(){
         Option optionPath = new Option("p", true, "Path to the file.");
         Option optionCmp = new Option("c", false, "In case of set, the result of Greedy search will be printed.");
         Option optionIters = new Option("i", true, "Set amount of iterations for Tabu Search");
+        Option optionGraph = new Option("g", false, "Plot graph if needed.");
 
+        options.addOption(optionGraph);
         options.addOption(optionPath);
         options.addOption(optionCmp);
         options.addOption(optionIters);
@@ -41,6 +45,7 @@ public class Parameters {
         assert cmd != null;
         path = cmd.getOptionValue("p");
         isCompare = cmd.hasOption("c");
+        isGraph = cmd.hasOption("g");
         iterations = cmd.getOptionValue("i") == null ? 300 : Integer.parseInt(cmd.getOptionValue("i"));
 
     }
@@ -57,5 +62,9 @@ public class Parameters {
 
     public String getPath() {
         return path;
+    }
+
+    public boolean isGraph() {
+        return isGraph;
     }
 }
