@@ -16,6 +16,7 @@ public class Environment {
     private double[][] costMatrix;
     private int capacity;
 
+    private String name;
     private final int DEPO = 0;
 
     private double cost = 0;
@@ -32,6 +33,8 @@ public class Environment {
         this.instance = instance;
 
         this.allowedVehicleNumber = instance.getFleet().getProfiles().get(0).getNumber();
+
+        name = instance.getInfo().getName();
 
         this.capacity = (int) instance.getFleet().getProfiles().stream()
                 .filter(vehicleProfile -> vehicleProfile.getType().equals("0")).findFirst().get().getCapacity();
@@ -157,5 +160,9 @@ public class Environment {
 
     public void setAllowedVehicleNumber(int allowedVehicleNumber) {
         this.allowedVehicleNumber = allowedVehicleNumber;
+    }
+
+    public String getName() {
+        return name;
     }
 }

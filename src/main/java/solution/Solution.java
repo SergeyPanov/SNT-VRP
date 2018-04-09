@@ -2,7 +2,10 @@ package solution;
 
 import algorithms.GreedySearch;
 import algorithms.TabuSearch;
+import org.knowm.xchart.*;
 
+
+import java.io.IOException;
 import java.util.*;
 
 public class Solution {
@@ -68,5 +71,38 @@ public class Solution {
         System.out.println("\nTotal cost: " + environment.getCost());
     }
 
+    public void plot(String algorithmName) throws IOException {
+
+        List<Double> xData = new ArrayList<>();
+        List<Double> yData = new ArrayList<>();
+
+        environment.getFleet()
+                .sort(Comparator.comparing(Vehicle::getId));
+
+
+        XYChart chart = new XYChartBuilder().width(600).height(400).title("Total cost: " + environment.getCost()).xAxisTitle("X").yAxisTitle("Y").build();
+
+
+        environment.getFleet().forEach(v -> {
+            if (v.getRoute().size() > 2){
+                for (int i = 0; i < v.getRoute().size(); i++) {
+                     xData.add((double) v.getRoute().get(i).getoX());
+                     yData.add((double) v.getRoute().get(i).getoY());
+                }
+
+                chart.addSeries(String.valueOf(v.getId()), xData, yData);
+
+                xData.clear();
+                yData.clear();
+
+            }
+
+        });
+
+
+        BitmapEncoder.saveBitmapWithDPI(chart, environment.getName() + "_" + algorithmName + "_" + environment.getCost(), BitmapEncoder.BitmapFormat.PNG, 300);
+
+
+    }
 
 }

@@ -7,10 +7,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws JAXBException {
+    public static void main(String[] args) throws JAXBException, IOException {
 
         Parameters params = new Parameters();
         params.parse(args);
@@ -27,14 +28,17 @@ public class Main {
         solution.greedySearch();
         if (params.isCompare()){
             solution.printBestRoute();
+            if (params.isGraph()){
+                solution.plot("greedy");
+            }
         }
 
         solution.tabuSearch(  params.getIterations());
         solution.printBestRoute();
 
-//        if (params.isGraph()){
-//            solution.plot();
-//        }
+        if (params.isGraph()){
+            solution.plot("tabu");
+        }
 
     }
 }
