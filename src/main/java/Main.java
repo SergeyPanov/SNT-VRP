@@ -1,7 +1,7 @@
 import instance.Instance;
 import params.Parameters;
-import solution.Environment;
-import solution.Solution;
+import environment.Environment;
+import environment.Solution;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

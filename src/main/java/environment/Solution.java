@@ -1,7 +1,7 @@
-package solution;
+package environment;
 
 import algorithms.GreedySearch;
-import algorithms.TabuSearch;
+import algorithms.NovelSearch;
 import org.knowm.xchart.*;
 
 
@@ -9,16 +9,10 @@ import java.io.IOException;
 import java.util.*;
 
 public class Solution {
-
-
     private Environment environment;
-    private TabuList tabu;
-
-
 
     public Solution(Environment environment) {
         this.environment = environment;
-        tabu = new TabuList();
     }
 
     /**
@@ -30,21 +24,18 @@ public class Solution {
     }
 
     /**
-     * Execite TabuSearch
+     * Execite NovelSearch
      * @param numberOfIters Stop condition
      */
 
     public void tabuSearch(int numberOfIters) {
-
-//        greedySearch();
-
-        TabuSearch tabuSearch = new TabuSearch(tabu, numberOfIters, 10);
-        environment = tabuSearch.execute(environment);
+        NovelSearch novelSearch = new NovelSearch( numberOfIters, 10);
+        environment = novelSearch.execute(environment);
 
     }
 
     /**
-     * Display tha best solution.
+     * Display tha best environment.
      */
     public void printBestRoute() {
         environment.getFleet()
@@ -71,6 +62,9 @@ public class Solution {
         System.out.println("\nTotal cost: " + environment.getCost());
     }
 
+    /**
+     * Plot graph of routes.
+     */
     public void plot(String algorithmName) throws IOException {
 
         List<Double> xData = new ArrayList<>();

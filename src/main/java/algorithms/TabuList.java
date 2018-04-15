@@ -1,5 +1,7 @@
-package solution;
+package algorithms;
 
+
+import environment.Vertex;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,12 +22,7 @@ public class TabuList {
     }
 
     /**
-     * Adjust delays
-     * @param routeFrom
-     * @param routeTo
-     * @param swapA
-     * @param swapB
-     * @param horizon
+     * Adjust delays probabilities of choosing.
      */
     public void setupDelays(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int swapA, int swapB, int horizon){
         Random tbRandomChanger = new Random();
@@ -36,12 +33,8 @@ public class TabuList {
 
     /**
      * Check if vertex is in tabu list
-     * @param i
-     * @param j
-     * @return
      */
     public boolean isInTabu(int i, int j){
-        //Check if the move is a Tabu! - If it is Tabu break
         return tabuList[i][j] != 0;
     }
 

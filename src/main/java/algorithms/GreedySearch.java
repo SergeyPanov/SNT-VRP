@@ -1,14 +1,14 @@
 package algorithms;
 
-import solution.Environment;
-import solution.Vehicle;
-import solution.Vertex;
+import environment.Environment;
+import environment.Vehicle;
+import environment.Vertex;
 
 import java.util.Arrays;
 
 /**
  * Greedy search implementation.
- * User as initial solution.
+ * User as initial environment.
  * Also used for comparison with Tabu Search
  */
 public class GreedySearch implements Algorithm {

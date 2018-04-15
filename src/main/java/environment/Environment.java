@@ -1,4 +1,4 @@
-package solution;
+package environment;
 
 import instance.Instance;
 import instance.Node;
@@ -44,6 +44,9 @@ public class Environment {
         setupEnvironment();
     }
 
+    /**
+     * Setup environment.
+     */
     private void setupEnvironment(){
 
         vertices = new Vertex[ instance.getNetwork().getNodes().getNode().size()];

@@ -10,10 +10,7 @@ public class Request {
 
     private int node;
 
-
     private double quantity;
-
-    private double serviceTime;
 
     @XmlAttribute
     public int getId() {
@@ -40,14 +37,5 @@ public class Request {
 
     public void setQuantity(double quantity) {
         this.quantity = quantity;
-    }
-
-    @XmlElement(name = "service_time")
-    public double getServiceTime() {
-        return serviceTime;
-    }
-
-    public void setServiceTime(double serviceTime) {
-        this.serviceTime = serviceTime;
     }
 }

@@ -17,7 +17,6 @@ public class VehicleProfile {
 
     private double capacity;
 
-    private double maxTravelTime;
 
 
     @XmlAttribute
@@ -63,14 +62,5 @@ public class VehicleProfile {
 
     public void setCapacity(double capacity) {
         this.capacity = capacity;
-    }
-
-    @XmlElement(name = "max_travel_time")
-    public double getMaxTravelTime() {
-        return maxTravelTime;
-    }
-
-    public void setMaxTravelTime(double maxTravelTime) {
-        this.maxTravelTime = maxTravelTime;
     }
 }

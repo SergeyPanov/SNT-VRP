@@ -1,6 +1,6 @@
 package algorithms;
 
-import solution.Environment;
+import environment.Environment;
 
 /**
  * Interface should be implemented by algorithm.

@@ -1,4 +1,4 @@
-package solution;
+package environment;
 
 /**
  * Class represents Customer(Vertex)

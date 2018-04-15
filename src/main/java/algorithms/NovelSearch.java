@@ -1,18 +1,17 @@
 package algorithms;
 
-import solution.Environment;
-import solution.TabuList;
-import solution.Vehicle;
-import solution.Vertex;
+import environment.Environment;
+import environment.Vehicle;
+import environment.Vertex;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Tabu search implementation.
+ * Novel search implementation.
  */
-public class TabuSearch implements Algorithm {
+public class NovelSearch implements Algorithm {
     private TabuList tabu;
     private int numberOfIters;
     private int horizon;
@@ -26,8 +25,8 @@ public class TabuSearch implements Algorithm {
     private int swapA = -1, swapB = -1, swapRtFrom = -1, swapRtTo = -1;
 
 
-    public TabuSearch(TabuList tabu, int numberOfIters, int horizon) {
-        this.tabu = tabu;
+    public NovelSearch(int numberOfIters, int horizon) {
+        this.tabu = new TabuList();
         this.numberOfIters = numberOfIters;
         this.horizon = horizon;
 
@@ -35,11 +34,6 @@ public class TabuSearch implements Algorithm {
 
     /**
      * Check if Vertexes can be swap.
-     * @param routeFrom
-     * @param routeTo
-     * @param i
-     * @param j
-     * @return
      */
     private boolean checkTabu(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
         int routeFromStart = routeFrom.get(i - 1).getId();
@@ -56,11 +50,6 @@ public class TabuSearch implements Algorithm {
 
     /**
      * Get cost of neighbour solution.
-     * @param routeFrom
-     * @param routeTo
-     * @param i
-     * @param j
-     * @return
      */
     private  double getNeighbourCost(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
 
@@ -79,6 +68,9 @@ public class TabuSearch implements Algorithm {
     }
 
 
+    /**
+     * Reorganize routes based on swapped places.
+     */
     private void changeRoutes(ArrayList<Vertex> routeFrom,
                               ArrayList<Vertex> routeTo,
                               int swapRtFrom,
@@ -100,7 +92,9 @@ public class TabuSearch implements Algorithm {
     }
 
 
-
+    /**
+     * Takes route and based on neighborhood solutions choose the best.
+     */
     private double innerIteration(ArrayList<Vertex> routeFrom,
                                 int i,
                                 int vechicleIndexFrom,
@@ -138,10 +132,12 @@ public class TabuSearch implements Algorithm {
                 }
             }
         }
-
         return bestCostOfIteration;
     }
 
+    /**
+     * For each route find the best solution
+     */
     private double singleIteration(double bestCostOfIteration){
         for (int vechicleIndexFrom = 0; vechicleIndexFrom < this.environment.getFleet().size(); vechicleIndexFrom++) {
 
@@ -156,6 +152,9 @@ public class TabuSearch implements Algorithm {
         return bestCostOfIteration;
     }
 
+    /**
+     * Swap vertexes.
+     */
     private void swapRoutes(ArrayList<Vertex> routeTo, Vertex swapVertex){
         if (swapA < swapB) {
             routeTo.add(swapB, swapVertex);
@@ -217,6 +216,9 @@ public class TabuSearch implements Algorithm {
         return this.environment;
     }
 
+    /**
+     * Save the best solution.
+     */
     private void saveBestSolution(Environment environment) {
 
         Set<Vehicle> bestFleet = new HashSet<>();
