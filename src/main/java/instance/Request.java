@@ -10,7 +10,6 @@ public class Request {
 
     private int node;
 
-    private TimeWindow tw;
 
     private double quantity;
 
@@ -32,15 +31,6 @@ public class Request {
 
     public void setNode(int node) {
         this.node = node;
-    }
-
-    @XmlElement
-    public TimeWindow getTw() {
-        return tw;
-    }
-
-    public void setTw(TimeWindow tw) {
-        this.tw = tw;
     }
 
     @XmlElement
