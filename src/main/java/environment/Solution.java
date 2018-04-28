@@ -28,8 +28,9 @@ public class Solution {
      * @param numberOfIters Stop condition
      */
 
-    public void tabuSearch(int numberOfIters) {
-        NovelSearch novelSearch = new NovelSearch( numberOfIters, 10);
+    public void tabuSearch(int numberOfIters, int horizon) {
+        System.out.println("Horizon: " + horizon + " Iterations: " + numberOfIters);
+        NovelSearch novelSearch = new NovelSearch( numberOfIters, horizon);
         environment = novelSearch.execute(environment);
 
     }
@@ -41,9 +42,12 @@ public class Solution {
         environment.getFleet()
                 .sort(Comparator.comparing(Vehicle::getId));
 
+        int summ = Arrays.stream(environment.getVertices()).mapToInt(Vertex::getDemand).sum();
+        System.out.println(summ);
+
         environment.getFleet().forEach(v -> {
             if (v.getRoute().size() > 2){
-                System.out.print("Vehicle: " + v.getId() + " route: ");
+                System.out.print("Vehicle: " + v.getId() + " route: " + " load:" + v.getLoad());
 
                 System.out.print("(id: " + v.getRoute().get(0).getId()
                         + " oX: " + v.getRoute().get(0).getoX() + " oY: "
