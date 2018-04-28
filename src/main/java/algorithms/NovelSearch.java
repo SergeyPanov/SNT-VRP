@@ -103,7 +103,6 @@ public class NovelSearch implements Algorithm {
         for (int vechicleIndexTo = 0; vechicleIndexTo < this.environment.getFleet().size(); vechicleIndexTo++) {
 
             ArrayList<Vertex> routeTo = this.environment.getFleet().get(vechicleIndexTo).getRoute();
-
             for (int j = 0;
                  j < routeTo.size() - 1; j++) { //Not possible to move after last Depot!
 
@@ -163,15 +162,21 @@ public class NovelSearch implements Algorithm {
         }
     }
 
+    /**
+     * Starts execution.
+     */
     @Override
     public Environment execute(Environment environment) {
 
         this.environment = environment;
 
+        // Init Tabu list
         tabu.setTabuList(new int[this.environment.getCostMatrix()[1].length + 1][this.environment.getCostMatrix()[1].length + 1]);
 
+        // Initial best cost is actual cost
         totalBestCost = this.environment.getCost();
 
+        // Execute algorithm "numberOfIters" times
         for (int iteration = 0; iteration < numberOfIters; ++iteration) {
 
             ArrayList<Vertex> routeFrom;
@@ -180,7 +185,7 @@ public class NovelSearch implements Algorithm {
 
             double bestCostOfIteration = this.singleIteration(Double.MAX_VALUE);    // Execute single iteration of algorithm
 
-            tabu.decreaseTabu();    // Each iteration decrease value in tabu-list
+            tabu.decreaseTabu();    // Each iteration decrease value in novel-list
 
             routeFrom = this.environment.getFleet().get(swapRtFrom).getRoute(); // Just alias for convenience
             routeTo = this.environment.getFleet().get(swapRtTo).getRoute(); // Just alias for convenience

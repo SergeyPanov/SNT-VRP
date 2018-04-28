@@ -11,7 +11,7 @@ public class TabuList {
 
 
     /**
-     * Decrease tabu list on each iteration
+     * Decrease novel list on each iteration
      */
     public void decreaseTabu(){
         for (int i = 0; i < tabuList[0].length; i++) {
@@ -32,7 +32,7 @@ public class TabuList {
     }
 
     /**
-     * Check if vertex is in tabu list
+     * Check if vertex is in novel list
      */
     public boolean isInTabu(int i, int j){
         return tabuList[i][j] != 0;
