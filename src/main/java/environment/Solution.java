@@ -1,7 +1,7 @@
 package environment;
 
 import algorithms.GreedySearch;
-import algorithms.NovelSearch;
+import algorithms.TabuSearch;
 import org.knowm.xchart.*;
 
 
@@ -24,14 +24,13 @@ public class Solution {
     }
 
     /**
-     * Execite NovelSearch
-     * @param numberOfIters Stop condition
+     * Execite TabuSearch
      */
 
     public void tabuSearch(int numberOfIters, int horizon) {
         System.out.println("Horizon: " + horizon + " Iterations: " + numberOfIters);
-        NovelSearch novelSearch = new NovelSearch( numberOfIters, horizon);
-        environment = novelSearch.execute(environment);
+        TabuSearch tabuSearch = new TabuSearch( numberOfIters, horizon);
+        environment = tabuSearch.execute(environment);
 
     }
 

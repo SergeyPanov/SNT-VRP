@@ -37,7 +37,7 @@ public class Main {
         solution.printBestRoute();
 
         if (params.isGraph()){
-            solution.plot("novel");
+            solution.plot("tabu");
         }
 
     }

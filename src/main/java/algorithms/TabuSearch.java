@@ -9,13 +9,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Novel search implementation.
+ * Tabu search implementation.
  */
-public class NovelSearch implements Algorithm {
+public class TabuSearch implements Algorithm {
     private TabuList tabu;
     private int numberOfIters;
     private int horizon;
-
 
     private Environment environment;
     private double totalBestCost;
@@ -25,7 +24,7 @@ public class NovelSearch implements Algorithm {
     private int swapA = -1, swapB = -1, swapRtFrom = -1, swapRtTo = -1;
 
 
-    public NovelSearch(int numberOfIters, int horizon) {
+    public TabuSearch(int numberOfIters, int horizon) {
         this.tabu = new TabuList();
         this.numberOfIters = numberOfIters;
         this.horizon = horizon;
@@ -33,7 +32,7 @@ public class NovelSearch implements Algorithm {
     }
 
     /**
-     * Check if Vertexes can be swap.
+     * Check if tabu list does not reject to swap vertexes
      */
     private boolean checkTabu(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
         int routeFromStart = routeFrom.get(i - 1).getId();
@@ -100,7 +99,7 @@ public class NovelSearch implements Algorithm {
                                 int vechicleIndexFrom,
                                 double bestCostOfIteration
                                 ){
-        for (int vechicleIndexTo = 0; vechicleIndexTo < this.environment.getFleet().size(); vechicleIndexTo++) {
+        for (int vechicleIndexTo = 0; vechicleIndexTo < this.environment.getFleet().size(); vechicleIndexTo++) {    // Look for the best vertex for relocation
 
             ArrayList<Vertex> routeTo = this.environment.getFleet().get(vechicleIndexTo).getRoute();
             for (int j = 0;
@@ -109,18 +108,18 @@ public class NovelSearch implements Algorithm {
                 mvNdDemand = routeFrom.get(i).getDemand();
 
                 if ((vechicleIndexFrom == vechicleIndexTo)
-                        || this.environment.getFleet().get(vechicleIndexTo).isFit(mvNdDemand)) {
+                        || this.environment.getFleet().get(vechicleIndexTo).isFit(mvNdDemand)) {    // Check if it possible to add vertex into the rout
 
 
                     if (!((vechicleIndexFrom == vechicleIndexTo) && ((j == i) || (j == i - 1)))) {
 
-                        if (checkTabu(routeFrom, routeTo, i, j)){
+                        if (checkTabu(routeFrom, routeTo, i, j)){   // Check if relocation is not rejected by the tabu-list
                             break;
                         }
 
-                        double neightCost = getNeighbourCost(routeFrom, routeTo, i, j);
+                        double neightCost = getNeighbourCost(routeFrom, routeTo, i, j); // Get cost of the new solution
 
-                        if (neightCost < bestCostOfIteration) {
+                        if (neightCost < bestCostOfIteration) { // IF better solution was found apply it
                             bestCostOfIteration = neightCost;
                             swapA = i;
                             swapB = j;
@@ -138,13 +137,13 @@ public class NovelSearch implements Algorithm {
      * For each route find the best solution
      */
     private double singleIteration(double bestCostOfIteration){
-        for (int vechicleIndexFrom = 0; vechicleIndexFrom < this.environment.getFleet().size(); vechicleIndexFrom++) {
+        for (int vechicleIndexFrom = 0; vechicleIndexFrom < this.environment.getFleet().size(); vechicleIndexFrom++) {  // Take route
 
             ArrayList<Vertex> routeFrom = this.environment.getFleet().get(vechicleIndexFrom).getRoute();
 
-            for (int i = 1; i < routeFrom.size() - 1; i++) { //Not possible to move depot!
+            for (int i = 1; i < routeFrom.size() - 1; i++) { // Take vertex on the route
 
-                bestCostOfIteration = innerIteration(routeFrom, i, vechicleIndexFrom, bestCostOfIteration);
+                bestCostOfIteration = innerIteration(routeFrom, i, vechicleIndexFrom, bestCostOfIteration); // Find best relocation
 
             }
         }
@@ -152,9 +151,9 @@ public class NovelSearch implements Algorithm {
     }
 
     /**
-     * Swap vertexes.
+     * Swap vertexes on the route
      */
-    private void swapRoutes(ArrayList<Vertex> routeTo, Vertex swapVertex){
+    private void swapVertexes(ArrayList<Vertex> routeTo, Vertex swapVertex){    // Add swapVertex to the route
         if (swapA < swapB) {
             routeTo.add(swapB, swapVertex);
         } else {
@@ -185,30 +184,29 @@ public class NovelSearch implements Algorithm {
 
             double bestCostOfIteration = this.singleIteration(Double.MAX_VALUE);    // Execute single iteration of algorithm
 
-            tabu.decreaseTabu();    // Each iteration decrease value in novel-list
+            tabu.decreaseTabu();    // Each iteration decrease value in tabu-list
 
-            routeFrom = this.environment.getFleet().get(swapRtFrom).getRoute(); // Just alias for convenience
-            routeTo = this.environment.getFleet().get(swapRtTo).getRoute(); // Just alias for convenience
+            routeFrom = this.environment.getFleet().get(swapRtFrom).getRoute();
+            routeTo = this.environment.getFleet().get(swapRtTo).getRoute();
 
             this.environment.getFleet().get(swapRtFrom).setRoute(null);
             this.environment.getFleet().get(swapRtTo).setRoute(null);
 
             Vertex swapVertex = routeFrom.get(swapA);
 
-            tabu.setupDelays(routeFrom, routeTo, swapA, swapB, horizon);
-            routeFrom.remove(swapA);
+            tabu.setupDelays(routeFrom, routeTo, swapA, swapB, horizon);    // Setup delays of the tabu list with values [hoziron .. horizon + 5)
+            routeFrom.remove(swapA);    // Remove vertex from the road
 
             if (swapRtFrom == swapRtTo) {
-                swapRoutes(routeTo, swapVertex);
+                swapVertexes(routeTo, swapVertex);
             } else {
                 routeTo.add(swapB + 1, swapVertex);
             }
+            changeRoutes(routeFrom, routeTo, swapRtFrom, swapRtTo, mvNdDemand); // Reconstruct routes based on swaped vertexes
 
-            changeRoutes(routeFrom, routeTo, swapRtFrom, swapRtTo, mvNdDemand);
+            this.environment.setCost(this.environment.getCost() + bestCostOfIteration); // Set new cost
 
-            this.environment.setCost(this.environment.getCost() + bestCostOfIteration);
-
-            if (this.environment.getCost() < totalBestCost) {
+            if (this.environment.getCost() < totalBestCost) {   // If better solution was found save it
                 saveBestSolution(this.environment);
             }
 

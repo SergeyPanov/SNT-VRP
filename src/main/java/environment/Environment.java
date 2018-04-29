@@ -28,6 +28,7 @@ public class Environment {
 
     private int numbOfCustomers;
 
+    // Fill environment based on input instance
     public Environment(Instance instance) {
 
         this.instance = instance;
