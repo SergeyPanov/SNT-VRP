@@ -25,7 +25,8 @@ public class Vehicle {
     }
 
     public boolean isFit(int dem) {
-        return (load + dem <= capacity);
+        int sum = route.stream().mapToInt(Vertex::getDemand).sum();
+        return (sum + dem <= capacity);
     }
 
     public ArrayList<Vertex> getRoute() {

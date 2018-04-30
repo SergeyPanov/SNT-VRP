@@ -52,18 +52,20 @@ public class TabuSearch implements Algorithm {
      */
     private  double getNeighbourCost(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
 
-        int routeFromStart = routeFrom.get(i - 1).getId();
-        int routeFromEnd = routeFrom.get(i).getId();
-        int routeFromStartNeigh = routeFrom.get(i + 1).getId();
-        int routeToStart = routeTo.get(j).getId();
-        int routeToEnd = routeTo.get(j + 1).getId();
+        int routeFromPrev = routeFrom.get(i - 1).getId();
+        int routeFromCurr = routeFrom.get(i).getId();
+        int routeFromNext = routeFrom.get(i + 1).getId();
 
-        return environment.getCostMatrix()[routeFromStart][routeFromStartNeigh]
-                + environment.getCostMatrix()[routeToStart][routeFromEnd]
-                + environment.getCostMatrix()[routeFromEnd][routeToEnd]
-                - environment.getCostMatrix()[routeFromStart][routeFromEnd]
-                - environment.getCostMatrix()[routeFromEnd][routeFromStartNeigh]
-                - environment.getCostMatrix()[routeToStart][routeToEnd];
+        int routeToCurr = routeTo.get(j).getId();
+        int routeToNext = routeTo.get(j + 1).getId();
+
+        return environment.getCostMatrix()[routeFromPrev][routeFromNext]
+                + environment.getCostMatrix()[routeToCurr][routeFromCurr]
+                + environment.getCostMatrix()[routeFromCurr][routeToNext]
+
+                - environment.getCostMatrix()[routeFromPrev][routeFromCurr]
+                - environment.getCostMatrix()[routeFromCurr][routeFromNext]
+                - environment.getCostMatrix()[routeToCurr][routeToNext];
     }
 
 
@@ -92,14 +94,14 @@ public class TabuSearch implements Algorithm {
 
 
     /**
-     * Takes route and based on neighborhood solutions choose the best.
+     * Search new best location for vertex i
      */
     private double innerIteration(ArrayList<Vertex> routeFrom,
                                 int i,
                                 int vechicleIndexFrom,
                                 double bestCostOfIteration
                                 ){
-        for (int vechicleIndexTo = 0; vechicleIndexTo < this.environment.getFleet().size(); vechicleIndexTo++) {    // Look for the best vertex for relocation
+        for (int vechicleIndexTo = 0; vechicleIndexTo < this.environment.getFleet().size(); vechicleIndexTo++) {
 
             ArrayList<Vertex> routeTo = this.environment.getFleet().get(vechicleIndexTo).getRoute();
             for (int j = 0;
@@ -107,9 +109,10 @@ public class TabuSearch implements Algorithm {
 
                 mvNdDemand = routeFrom.get(i).getDemand();
 
+                //If we assign to a different route check capacity constrains
+                //if in the new route is the same no need to check for capacity
                 if ((vechicleIndexFrom == vechicleIndexTo)
-                        || this.environment.getFleet().get(vechicleIndexTo).isFit(mvNdDemand)) {    // Check if it possible to add vertex into the rout
-
+                        || this.environment.getFleet().get(vechicleIndexTo).isFit(mvNdDemand)) {
 
                     if (!((vechicleIndexFrom == vechicleIndexTo) && ((j == i) || (j == i - 1)))) {
 
@@ -121,8 +124,10 @@ public class TabuSearch implements Algorithm {
 
                         if (neightCost < bestCostOfIteration) { // IF better solution was found apply it
                             bestCostOfIteration = neightCost;
+                            // Vertexes for swap
                             swapA = i;
                             swapB = j;
+                            // Routes containing vertexes
                             swapRtFrom = vechicleIndexFrom;
                             swapRtTo = vechicleIndexTo;
                         }
@@ -134,7 +139,7 @@ public class TabuSearch implements Algorithm {
     }
 
     /**
-     * For each route find the best solution
+     * For each route find the best relocation
      */
     private double singleIteration(double bestCostOfIteration){
         for (int vechicleIndexFrom = 0; vechicleIndexFrom < this.environment.getFleet().size(); vechicleIndexFrom++) {  // Take route
@@ -142,16 +147,14 @@ public class TabuSearch implements Algorithm {
             ArrayList<Vertex> routeFrom = this.environment.getFleet().get(vechicleIndexFrom).getRoute();
 
             for (int i = 1; i < routeFrom.size() - 1; i++) { // Take vertex on the route
-
                 bestCostOfIteration = innerIteration(routeFrom, i, vechicleIndexFrom, bestCostOfIteration); // Find best relocation
-
             }
         }
         return bestCostOfIteration;
     }
 
     /**
-     * Swap vertexes on the route
+     * Relocate vertex on the same route
      */
     private void swapVertexes(ArrayList<Vertex> routeTo, Vertex swapVertex){    // Add swapVertex to the route
         if (swapA < swapB) {
@@ -186,8 +189,8 @@ public class TabuSearch implements Algorithm {
 
             tabu.decreaseTabu();    // Each iteration decrease value in tabu-list
 
-            routeFrom = this.environment.getFleet().get(swapRtFrom).getRoute();
-            routeTo = this.environment.getFleet().get(swapRtTo).getRoute();
+            routeFrom = this.environment.getFleet().get(swapRtFrom).getRoute(); // Get route Rk
+            routeTo = this.environment.getFleet().get(swapRtTo).getRoute(); // Get route Rk'
 
             this.environment.getFleet().get(swapRtFrom).setRoute(null);
             this.environment.getFleet().get(swapRtTo).setRoute(null);
@@ -202,7 +205,7 @@ public class TabuSearch implements Algorithm {
             } else {
                 routeTo.add(swapB + 1, swapVertex);
             }
-            changeRoutes(routeFrom, routeTo, swapRtFrom, swapRtTo, mvNdDemand); // Reconstruct routes based on swaped vertexes
+            changeRoutes(routeFrom, routeTo, swapRtFrom, swapRtTo, mvNdDemand); // Reconstruct routes based on relocated vertex
 
             this.environment.setCost(this.environment.getCost() + bestCostOfIteration); // Set new cost
 

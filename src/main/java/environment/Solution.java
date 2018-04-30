@@ -24,29 +24,28 @@ public class Solution {
     }
 
     /**
-     * Execite TabuSearch
+     * Execute TabuSearch
      */
-
     public void tabuSearch(int numberOfIters, int horizon) {
-        System.out.println("Horizon: " + horizon + " Iterations: " + numberOfIters);
         TabuSearch tabuSearch = new TabuSearch( numberOfIters, horizon);
         environment = tabuSearch.execute(environment);
 
     }
 
     /**
-     * Display tha best environment.
+     * Display tha best solution.
      */
     public void printBestRoute() {
         environment.getFleet()
                 .sort(Comparator.comparing(Vehicle::getId));
 
-        int summ = Arrays.stream(environment.getVertices()).mapToInt(Vertex::getDemand).sum();
-        System.out.println(summ);
+        int totalDemand = Arrays.stream(environment.getVertices()).mapToInt(Vertex::getDemand).sum();
+        System.out.println("Total demand: " + totalDemand );
 
         environment.getFleet().forEach(v -> {
             if (v.getRoute().size() > 2){
-                System.out.print("Vehicle: " + v.getId() + " route: " + " load:" + v.getLoad());
+                int sum = v.getRoute().stream().mapToInt(Vertex::getDemand).sum();
+                System.out.print("Vehicle: " + v.getId() + " vehicle capacity: " + v.getCapacity() + " load:" + sum + " route: ");
 
                 System.out.print("(id: " + v.getRoute().get(0).getId()
                         + " oX: " + v.getRoute().get(0).getoX() + " oY: "
