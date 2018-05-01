@@ -22,17 +22,32 @@ public class TabuList {
     }
 
     /**
-     * Adjust delays probabilities of choosing.
+     *  Add edges into tabu-list in case of "swap" strategy
      */
-    public void setupDelays(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int swapA, int swapB, int horizon){
-        Random tbRandomChanger = new Random();
-        getTabuList()[routeFrom.get(swapA - 1).getId()][routeFrom.get(swapA).getId()] = horizon + tbRandomChanger.nextInt(5);
-        getTabuList()[routeFrom.get(swapA).getId()][routeFrom.get(swapA + 1).getId()] = horizon + tbRandomChanger.nextInt(5);
-        getTabuList()[routeTo.get(swapB).getId()][routeTo.get(swapB + 1).getId()] = horizon + tbRandomChanger.nextInt(5);
+    public void setupSwapDelays(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int swapA, int swapB, int horizon){
+
+        Random tbBoundChanger = new Random();
+
+        getTabuList()[routeFrom.get(swapA - 1).getId()][routeFrom.get(swapA).getId()] = horizon + tbBoundChanger.nextInt(5);
+        getTabuList()[routeFrom.get(swapA).getId()][routeFrom.get(swapA + 1).getId()] = horizon + tbBoundChanger.nextInt(5);
+
+        getTabuList()[routeTo.get(swapB - 1).getId()][routeTo.get(swapB).getId()] = horizon + tbBoundChanger.nextInt(5);
+        getTabuList()[routeTo.get(swapB).getId()][routeTo.get(swapB + 1).getId()] = horizon + tbBoundChanger.nextInt(5);
+    }
+
+
+    /**
+     * Add edges into tabu-list in case of "relocation" strategy
+     */
+    public void setupRelocationDelays(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int swapA, int swapB, int horizon){
+        Random tbBoundChanger = new Random();
+        getTabuList()[routeFrom.get(swapA - 1).getId()][routeFrom.get(swapA).getId()] = horizon + tbBoundChanger.nextInt(5);
+        getTabuList()[routeFrom.get(swapA).getId()][routeFrom.get(swapA + 1).getId()] = horizon + tbBoundChanger.nextInt(5);
+        getTabuList()[routeTo.get(swapB).getId()][routeTo.get(swapB + 1).getId()] = horizon + tbBoundChanger.nextInt(5);
     }
 
     /**
-     * Check if vertex is in novel list
+     * Check if vertex is in tabu-list
      */
     public boolean isInTabu(int i, int j){
         return tabuList[i][j] != 0;

@@ -12,6 +12,7 @@ import java.util.Set;
  * Tabu search implementation.
  */
 public class TabuSearch implements Algorithm {
+
     private TabuList tabu;
     private int numberOfIters;
     private int horizon;
@@ -22,6 +23,8 @@ public class TabuSearch implements Algorithm {
     // Class variables to simplify some methods
     private int mvNdDemand = 0;
     private int swapA = -1, swapB = -1, swapRtFrom = -1, swapRtTo = -1;
+
+    private Strategy strategy = Strategy.NONE;
 
 
     public TabuSearch(int numberOfIters, int horizon) {
@@ -52,7 +55,7 @@ public class TabuSearch implements Algorithm {
      * If value is negative -> improve the solution
      * If value is positive -> make current solution worse
      */
-    private  double getNeighbourCost(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
+    private  double getRelocateNeighCost(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
 
         int routeFromPrev = routeFrom.get(i - 1).getId();
         int routeFromCurr = routeFrom.get(i).getId();
@@ -68,6 +71,30 @@ public class TabuSearch implements Algorithm {
                 - environment.getCostMatrix()[routeFromPrev][routeFromCurr]
                 - environment.getCostMatrix()[routeFromCurr][routeFromNext]
                 - environment.getCostMatrix()[routeToCurr][routeToNext];
+    }
+
+    /**
+     * Get delta after swap vertex i and vertex j
+     */
+    private double getSwapNeighCost(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
+
+        int idPrevI = routeFrom.get(i - 1).getId();
+        int idNextI = routeFrom.get(i + 1).getId();
+        int idI = routeFrom.get(i).getId();
+
+        int idPrevJ = routeTo.get(j - 1).getId();
+        int idNextJ = routeTo.get(j + 1).getId();
+        int idJ = routeTo.get(j).getId();
+
+        return environment.getCostMatrix()[idPrevI][idJ]
+                + environment.getCostMatrix()[idJ][idNextI]
+                - environment.getCostMatrix()[idPrevI][idI]
+                - environment.getCostMatrix()[idI][idNextI]
+                + environment.getCostMatrix()[idPrevJ][idI]
+                + environment.getCostMatrix()[idI][idNextJ]
+                - environment.getCostMatrix()[idPrevJ][idJ]
+                - environment.getCostMatrix()[idJ][idNextJ];
+
     }
 
 
@@ -94,6 +121,18 @@ public class TabuSearch implements Algorithm {
                 .setLoad(this.environment.getFleet().get(swapRtTo).getLoad() + mvNdDemand);
     }
 
+    private boolean canBeSwapped(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
+
+        int costFromAfterExchange = routeFrom.stream().mapToInt(Vertex::getDemand).sum();
+        costFromAfterExchange += routeTo.get(j).getDemand() - routeFrom.get(i).getDemand();
+
+        int costToAfterExchange = routeTo.stream().mapToInt(Vertex::getDemand).sum();
+        costToAfterExchange += routeFrom.get(i).getDemand() - routeTo.get(j).getDemand();
+
+
+        return (  (costFromAfterExchange <= environment.getCapacity()) &&  (costToAfterExchange <= environment.getCapacity())  );
+
+    }
 
     /**
      * Search new best location for vertex "i" between vertexes "j" and "j+1"
@@ -122,10 +161,11 @@ public class TabuSearch implements Algorithm {
                             break;
                         }
 
-                        double neightCost = getNeighbourCost(routeFrom, routeTo, i, j); // Get cost of the new solution
+                        double neighCost = getRelocateNeighCost(routeFrom, routeTo, i, j); // Get cost of the new solution
 
-                        if (neightCost < bestCostOfIteration) { // IF better solution was found apply it
-                            bestCostOfIteration = neightCost;
+                        if (neighCost < bestCostOfIteration) { // IF better solution was found apply it
+                            bestCostOfIteration = neighCost;
+                            strategy = Strategy.RELOCATE;
                             // Vertex "swapA" will be placed between "swapB" and "swapB+1"
                             swapA = i;
                             swapB = j;
@@ -134,6 +174,30 @@ public class TabuSearch implements Algorithm {
                         }
                     }
                 }
+
+
+                // Try to execute swap operation. Depot cant be swapped.
+                if (vechicleIndexFrom != vechicleIndexTo && i != j && routeFrom.get(i).getId() != environment.getDEPO() && routeTo.get(j).getId() != environment.getDEPO() && canBeSwapped(routeFrom, routeTo, i, j)
+
+                        ){
+
+                    double swapBestCost = getSwapNeighCost(routeFrom, routeTo, i, j);
+
+                    if (swapBestCost < bestCostOfIteration){
+
+                        bestCostOfIteration = swapBestCost;
+
+                        strategy = Strategy.SWAP;
+
+                        swapA = i;
+                        swapB = j;
+
+                        swapRtFrom = vechicleIndexFrom; // Route contains vertex "swapA"
+                        swapRtTo = vechicleIndexTo; // Route contains vertex "swapB"
+                    }
+
+                }
+
             }
         }
         return bestCostOfIteration;
@@ -198,18 +262,36 @@ public class TabuSearch implements Algorithm {
 
             Vertex swapVertex = routeFrom.get(swapA);
 
-            tabu.setupDelays(routeFrom, routeTo, swapA, swapB, horizon);    // Add edges into Tabu-list. They will be placed in the tabu-list [horizon..horizon+5) iterations
-            routeFrom.remove(swapA);    // Remove vertex from the road
 
-            // Place vertex swapA on the better position
-            if (swapRtFrom == swapRtTo) {
-                swapVertexes(routeTo, swapVertex);
-            } else {
-                routeTo.add(swapB + 1, swapVertex);
+            // If relocation was the best decision
+            if (strategy == Strategy.RELOCATE){
+                tabu.setupRelocationDelays(routeFrom, routeTo, swapA, swapB, horizon);    // Add edges into Tabu-list. They will be placed in the tabu-list [horizon..horizon+5) iterations
+                routeFrom.remove(swapA);    // Remove vertex from the road
+
+                // Place vertex swapA on the better position
+                if (swapRtFrom == swapRtTo) {
+                    swapVertexes(routeTo, swapVertex);
+                } else {
+                    routeTo.add(swapB + 1, swapVertex);
+                }
+                changeRoutes(routeFrom, routeTo, swapRtFrom, swapRtTo, mvNdDemand); // Reconstruct routes based on relocated vertex
             }
-            changeRoutes(routeFrom, routeTo, swapRtFrom, swapRtTo, mvNdDemand); // Reconstruct routes based on relocated vertex
+
+            // If swap was the best decision
+            if (strategy == Strategy.SWAP){
+                tabu.setupSwapDelays(routeFrom, routeTo, swapA, swapB, horizon);
+                Vertex swapVertexB = routeTo.get(swapB);
+                routeTo.set(swapB, swapVertex);
+                routeFrom.set(swapA, swapVertexB);
+
+                environment.getFleet().get(swapRtFrom).setRoute(routeFrom);
+                environment.getFleet().get(swapRtTo).setRoute(routeTo);
+            }
 
             this.environment.setCost(this.environment.getCost() + bestCostOfIteration); // Set new cost
+
+
+            this.environment.calculateCost();
 
             if (this.environment.getCost() < totalBestCost) {   // If better solution was found save it
                 saveBestSolution(this.environment);

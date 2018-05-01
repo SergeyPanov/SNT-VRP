@@ -4,6 +4,7 @@ import instance.Instance;
 import instance.Node;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
 /**
@@ -43,6 +44,22 @@ public class Environment {
         this.numbOfCustomers = instance.getNetwork().getNodes().getNode().size() - 1;
 
         setupEnvironment();
+    }
+
+
+    public double calculateCost(){
+
+        double cost = 0;
+
+        for (Vehicle v:
+             fleet) {
+
+            for (int i = 0; i < v.getRoute().size() - 1; i++) {
+                cost += costMatrix[i][i + 1];
+            }
+
+        }
+        return cost;
     }
 
     /**
