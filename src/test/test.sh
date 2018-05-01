@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-SNAPSHOT="../../target/SNT-VRP-1.0-SNAPSHOT.jar"
 BASIC_RUN="java -jar "$SNAPSHOT
 
 POSITIONAL=()
@@ -26,6 +25,11 @@ case $key in
     ;;
     --input)
     DATASET_INPUT="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --snapshot)
+    SNAPSHOT="$2"
     shift # past argument
     shift # past value
     ;;
@@ -68,6 +72,11 @@ fi
 
 if [ -z "$IT" ]; then
     IT=6
+fi
+
+
+if [ -z "$SNAPSHOT" ]; then
+    SNAPSHOT="../../target/SNT-VRP-1.0-SNAPSHOT.jar"
 fi
 
 if [ ! -d "$DATASET_INPUT" ]; then
