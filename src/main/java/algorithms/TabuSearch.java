@@ -177,9 +177,18 @@ public class TabuSearch implements Algorithm {
 
 
                 // Try to execute swap operation. Depot cant be swapped.
-                if (vechicleIndexFrom != vechicleIndexTo && i != j && routeFrom.get(i).getId() != environment.getDEPO() && routeTo.get(j).getId() != environment.getDEPO() && canBeSwapped(routeFrom, routeTo, i, j)
-
+                if (vechicleIndexFrom != vechicleIndexTo
+                        && i != j && routeFrom.get(i).getId() != environment.getDEPO()
+                        && routeTo.get(j).getId() != environment.getDEPO()
+                        && canBeSwapped(routeFrom, routeTo, i, j)
                         ){
+
+                    if (tabu.isInTabu(i - 1, i)
+                            || tabu.isInTabu(i, i+1)
+                            || tabu.isInTabu(j-1, j)
+                            || tabu.isInTabu(j, j + 1)){
+                        break;
+                    }
 
                     double swapBestCost = getSwapNeighCost(routeFrom, routeTo, i, j);
 
