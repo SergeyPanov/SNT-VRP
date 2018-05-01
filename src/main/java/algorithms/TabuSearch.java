@@ -94,7 +94,6 @@ public class TabuSearch implements Algorithm {
                 + environment.getCostMatrix()[idI][idNextJ]
                 - environment.getCostMatrix()[idPrevJ][idJ]
                 - environment.getCostMatrix()[idJ][idNextJ];
-
     }
 
 

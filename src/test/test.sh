@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 SNAPSHOT="../../target/SNT-VRP-1.0-SNAPSHOT.jar"
-DATASET_INPUT="./dataset/input"
-OUTPUT_DIR="./dataset/output/tabu"
 BASIC_RUN="java -jar "$SNAPSHOT
 
 POSITIONAL=()
@@ -18,6 +16,16 @@ case $key in
     ;;
     --horizon)
     HORIZON="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --out)
+    OUTPUT_DIR="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    --input)
+    DATASET_INPUT="$2"
     shift # past argument
     shift # past value
     ;;
@@ -37,12 +45,6 @@ case $key in
 esac
 done
 
-if [ ! -d "$DATASET_INPUT" ]; then
-    echo "Dataset was not found"
-    exit 1
-fi
-
-
 if [ ! -d "$OUTPUT_DIR" ]; then
     mkdir $OUTPUT_DIR
 fi
@@ -50,6 +52,14 @@ fi
 
 if [ -z "$ITERATIONS" ]; then
     ITERATIONS=300
+fi
+
+if [ -z "$OUTPUT_DIR" ]; then
+    OUTPUT_DIR="./dataset/output/tabu"
+fi
+
+if [ -z "$DATASET_INPUT" ]; then
+    DATASET_INPUT="./dataset/input"
 fi
 
 if [ -z "$HORIZON" ]; then
@@ -60,6 +70,11 @@ if [ -z "$IT" ]; then
     IT=6
 fi
 
+if [ ! -d "$DATASET_INPUT" ]; then
+    echo "Dataset was not found"
+    exit 1
+fi
+
 
 cd ../../; mvn package; cd -    # Compile
 
@@ -67,6 +82,8 @@ if [ ! -f $SNAPSHOT ]; then
     echo "No executable jar file"
     exit 1
 fi
+
+
 
 for entry in "$DATASET_INPUT"/*
 do
@@ -79,7 +96,6 @@ do
     done
     IFS=$'\n' array_of_lines=("$(cat $OUTPUT_DIR/$fn_without_ext'.out'  | grep -e "Total cost:" | cut -d ' ' -f 3 |  cut -d '.' -f 1)")
 
-#    echo $array_of_lines
     max=0
     for v in ${array_of_lines[@]}; do
         if (( $v > $max )); then max=$v; fi;
@@ -99,8 +115,6 @@ do
     done
 
     echo "Average: "$(python3 -c "costs=str('${str}').split(); float_costs=[float(c) for c in costs]; print(sum(float_costs)/len(float_costs))" ) >> $OUTPUT_DIR/$fn_without_ext'.out'
-
-
 done
 
 
