@@ -32,7 +32,7 @@ public class TabuSearch implements Algorithm {
     }
 
     /**
-     * Check if tabu list does not reject to swap vertexes
+     * Check if tabu list does not reject relocate vertex i from "routeFrom" to "routeTo"
      */
     private boolean checkTabu(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
         int routeFromStart = routeFrom.get(i - 1).getId();
@@ -48,7 +48,9 @@ public class TabuSearch implements Algorithm {
     }
 
     /**
-     * Get cost of neighbour solution.
+     * Calculate delta cost of the solution after placing place "i" between "j" and "j+1".
+     * If value is negative -> improve the solution
+     * If value is positive -> make current solution worse
      */
     private  double getNeighbourCost(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int i, int j){
 
@@ -70,7 +72,7 @@ public class TabuSearch implements Algorithm {
 
 
     /**
-     * Reorganize routes based on swapped places.
+     * Reorganize routes based on replaced vertex
      */
     private void changeRoutes(ArrayList<Vertex> routeFrom,
                               ArrayList<Vertex> routeTo,
@@ -94,7 +96,7 @@ public class TabuSearch implements Algorithm {
 
 
     /**
-     * Search new best location for vertex i
+     * Search new best location for vertex "i" between vertexes "j" and "j+1"
      */
     private double innerIteration(ArrayList<Vertex> routeFrom,
                                 int i,
@@ -124,12 +126,11 @@ public class TabuSearch implements Algorithm {
 
                         if (neightCost < bestCostOfIteration) { // IF better solution was found apply it
                             bestCostOfIteration = neightCost;
-                            // Vertexes for swap
+                            // Vertex "swapA" will be placed between "swapB" and "swapB+1"
                             swapA = i;
                             swapB = j;
-                            // Routes containing vertexes
-                            swapRtFrom = vechicleIndexFrom;
-                            swapRtTo = vechicleIndexTo;
+                            swapRtFrom = vechicleIndexFrom; // Route contains vertex "swapA"
+                            swapRtTo = vechicleIndexTo; // Route contains vertex "swapB"
                         }
                     }
                 }
@@ -139,7 +140,7 @@ public class TabuSearch implements Algorithm {
     }
 
     /**
-     * For each route find the best relocation
+     * For each route find the best place
      */
     private double singleIteration(double bestCostOfIteration){
         for (int vechicleIndexFrom = 0; vechicleIndexFrom < this.environment.getFleet().size(); vechicleIndexFrom++) {  // Take route
@@ -185,21 +186,22 @@ public class TabuSearch implements Algorithm {
 
             ArrayList<Vertex> routeTo;
 
-            double bestCostOfIteration = this.singleIteration(Double.MAX_VALUE);    // Execute single iteration of algorithm
+            double bestCostOfIteration = this.singleIteration(Double.MAX_VALUE);    // Execute single iteration of algorithm. Get delta.
 
             tabu.decreaseTabu();    // Each iteration decrease value in tabu-list
 
-            routeFrom = this.environment.getFleet().get(swapRtFrom).getRoute(); // Get route Rk
-            routeTo = this.environment.getFleet().get(swapRtTo).getRoute(); // Get route Rk'
+            routeFrom = this.environment.getFleet().get(swapRtFrom).getRoute(); // Get route with vertex swapA
+            routeTo = this.environment.getFleet().get(swapRtTo).getRoute(); // Get route with vertex swapB
 
             this.environment.getFleet().get(swapRtFrom).setRoute(null);
             this.environment.getFleet().get(swapRtTo).setRoute(null);
 
             Vertex swapVertex = routeFrom.get(swapA);
 
-            tabu.setupDelays(routeFrom, routeTo, swapA, swapB, horizon);    // Setup delays of the tabu list with values [hoziron .. horizon + 5)
+            tabu.setupDelays(routeFrom, routeTo, swapA, swapB, horizon);    // Add edges into Tabu-list. They will be placed in the tabu-list [horizon..horizon+5) iterations
             routeFrom.remove(swapA);    // Remove vertex from the road
 
+            // Place vertex swapA on the better position
             if (swapRtFrom == swapRtTo) {
                 swapVertexes(routeTo, swapVertex);
             } else {

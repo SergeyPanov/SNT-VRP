@@ -4,6 +4,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Each node has the request.
+ */
 @XmlRootElement(name = "request")
 public class Request {
     private int id;

@@ -18,22 +18,27 @@ public class GreedySearch implements Algorithm {
 
         int vechicleIndex = 0;
 
+        // While all vertexes wont be on any route
         while (Arrays.stream(environment.getVertices()).filter(v -> !v.isDepot()).anyMatch(Vertex::isNotRouted)) {
 
             int serviceIndex = 0;
             Vertex candidateVertex = null;
             double mincost = Double.MAX_VALUE;
 
+            // All vehicles are full, add new one
             if (environment.getFleet().size() == vechicleIndex){
                 environment.getFleet().add(new Vehicle(environment.getFleet().size(), environment.getCapacity()));
             }
 
+            // Each vehicle starts from DEPO
             if (environment.getFleet().get(vechicleIndex).getRoute().isEmpty()){
                 environment.getFleet().get(vechicleIndex).addVertex(environment.getVertices()[environment.getDEPO()]);
             }
 
+            // Looking for a customer
             for (int i = 1; i <= environment.getNumbOfCustomers(); i++) {
 
+                // If customer is not routed and can be placed on the route
                 if (environment.getVertices()[i].isNotRouted()
 
                         && environment.getFleet().get(vechicleIndex)
@@ -48,7 +53,6 @@ public class GreedySearch implements Algorithm {
                     }
                 }
             }
-
 
             if (candidateVertex == null) {
                 if (vechicleIndex + 1 < environment.getAllowedVehicleNumber()){

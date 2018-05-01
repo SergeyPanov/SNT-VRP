@@ -3,6 +3,9 @@ package instance;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Holds network.
+ */
 @XmlRootElement(name = "network")
 public class Network {
 

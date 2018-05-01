@@ -3,6 +3,9 @@ package instance;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Node in the network. Used for creating Vertex.
+ */
 @XmlRootElement(name = "node")
 public class Node {
     private int id;

@@ -4,6 +4,9 @@ package instance;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Holds instance unmarshaled from input XML
+ */
 @XmlRootElement(name = "instance")
 public class Instance {
 

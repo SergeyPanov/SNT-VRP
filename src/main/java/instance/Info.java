@@ -3,6 +3,9 @@ package instance;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Basic information about instance.
+ */
 @XmlRootElement(name = "info")
 public class Info {
 

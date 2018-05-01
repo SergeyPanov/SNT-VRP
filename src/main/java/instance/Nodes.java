@@ -4,6 +4,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
+/**
+ * List of the nodes
+ */
 @XmlRootElement(name = "nodes")
 public class Nodes {
 
