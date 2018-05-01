@@ -24,26 +24,26 @@ public class TabuList {
     /**
      *  Add edges into tabu-list in case of "swap" strategy
      */
-    public void setupSwapDelays(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int swapA, int swapB, int horizon){
+    public void setupSwapDelays(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int swapA, int swapB, int horizon, int distance){
 
         Random tbBoundChanger = new Random();
 
-        getTabuList()[routeFrom.get(swapA - 1).getId()][routeFrom.get(swapA).getId()] = horizon + tbBoundChanger.nextInt(5);
-        getTabuList()[routeFrom.get(swapA).getId()][routeFrom.get(swapA + 1).getId()] = horizon + tbBoundChanger.nextInt(5);
+        getTabuList()[routeFrom.get(swapA - 1).getId()][routeFrom.get(swapA).getId()] = horizon + tbBoundChanger.nextInt(distance);
+        getTabuList()[routeFrom.get(swapA).getId()][routeFrom.get(swapA + 1).getId()] = horizon + tbBoundChanger.nextInt(distance);
 
-        getTabuList()[routeTo.get(swapB - 1).getId()][routeTo.get(swapB).getId()] = horizon + tbBoundChanger.nextInt(5);
-        getTabuList()[routeTo.get(swapB).getId()][routeTo.get(swapB + 1).getId()] = horizon + tbBoundChanger.nextInt(5);
+        getTabuList()[routeTo.get(swapB - 1).getId()][routeTo.get(swapB).getId()] = horizon + tbBoundChanger.nextInt(distance);
+        getTabuList()[routeTo.get(swapB).getId()][routeTo.get(swapB + 1).getId()] = horizon + tbBoundChanger.nextInt(distance);
     }
 
 
     /**
      * Add edges into tabu-list in case of "relocation" strategy
      */
-    public void setupRelocationDelays(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int swapA, int swapB, int horizon){
+    public void setupRelocationDelays(ArrayList<Vertex> routeFrom, ArrayList<Vertex> routeTo, int swapA, int swapB, int horizon, int distance){
         Random tbBoundChanger = new Random();
-        getTabuList()[routeFrom.get(swapA - 1).getId()][routeFrom.get(swapA).getId()] = horizon + tbBoundChanger.nextInt(5);
-        getTabuList()[routeFrom.get(swapA).getId()][routeFrom.get(swapA + 1).getId()] = horizon + tbBoundChanger.nextInt(5);
-        getTabuList()[routeTo.get(swapB).getId()][routeTo.get(swapB + 1).getId()] = horizon + tbBoundChanger.nextInt(5);
+        getTabuList()[routeFrom.get(swapA - 1).getId()][routeFrom.get(swapA).getId()] = horizon + tbBoundChanger.nextInt(distance);
+        getTabuList()[routeFrom.get(swapA).getId()][routeFrom.get(swapA + 1).getId()] = horizon + tbBoundChanger.nextInt(distance);
+        getTabuList()[routeTo.get(swapB).getId()][routeTo.get(swapB + 1).getId()] = horizon + tbBoundChanger.nextInt(distance);
     }
 
     /**

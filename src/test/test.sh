@@ -33,6 +33,11 @@ case $key in
     shift # past argument
     shift # past value
     ;;
+    --distance)
+    DISTANCE="$2"
+    shift # past argument
+    shift # past value
+    ;;
     --it)
     IT="$2"
     shift # past argument
@@ -74,9 +79,12 @@ if [ -z "$IT" ]; then
     IT=6
 fi
 
-
 if [ -z "$SNAPSHOT" ]; then
     SNAPSHOT="../../target/SNT-VRP-1.0-SNAPSHOT.jar"
+fi
+
+if [ -z "$DISTANCE" ]; then
+    DISTANCE=5
 fi
 
 if [ ! -d "$DATASET_INPUT" ]; then
@@ -100,7 +108,7 @@ do
     for i in $(seq 1 $IT)
     do
         fn_without_ext=$(echo ${entry} | cut -d "/" -f 4 | cut -d "." -f 1)
-        java -jar $SNAPSHOT -i $ITERATIONS -h $HORIZON -p $entry >> $OUTPUT_DIR/$fn_without_ext".out" 2>/dev/null
+        java -jar $SNAPSHOT -i $ITERATIONS -h $HORIZON -p $entry -d $DISTANCE >> $OUTPUT_DIR/$fn_without_ext".out" 2>/dev/null
         echo "-------" >> $OUTPUT_DIR/$fn_without_ext".out"
     done
     IFS=$'\n' array_of_lines=("$(cat $OUTPUT_DIR/$fn_without_ext'.out'  | grep -e "Total cost:" | cut -d ' ' -f 3 |  cut -d '.' -f 1)")
@@ -127,3 +135,8 @@ do
 done
 
 
+echo "This file contains common parameters used during experiments." >> $OUTPUT_DIR/"summarize.txt"
+echo "Amount of experiments with single instance: "$IT >> $OUTPUT_DIR/"summarize.txt"
+echo "Terminate search of best solution after "$ITERATIONS" iterations" >> $OUTPUT_DIR/"summarize.txt"
+echo "Left bound of horizon: "$HORIZON >> $OUTPUT_DIR/"summarize.txt"
+echo "Right bound of horizon: "$(($HORIZON+$DISTANCE)) >> $OUTPUT_DIR/"summarize.txt"

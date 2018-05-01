@@ -26,12 +26,13 @@ public class TabuSearch implements Algorithm {
 
     private Strategy strategy = Strategy.NONE;
 
+    private int distance;
 
-    public TabuSearch(int numberOfIters, int horizon) {
+    public TabuSearch(int numberOfIters, int horizon, int distance) {
         this.tabu = new TabuList();
         this.numberOfIters = numberOfIters;
         this.horizon = horizon;
-
+        this.distance = distance;
     }
 
     /**
@@ -264,7 +265,7 @@ public class TabuSearch implements Algorithm {
 
             // If relocation was the best decision
             if (strategy == Strategy.RELOCATE){
-                tabu.setupRelocationDelays(routeFrom, routeTo, swapA, swapB, horizon);    // Add edges into Tabu-list. They will be placed in the tabu-list [horizon..horizon+5) iterations
+                tabu.setupRelocationDelays(routeFrom, routeTo, swapA, swapB, horizon, distance);    // Add edges into Tabu-list. They will be placed in the tabu-list [horizon..horizon+distance) iterations
                 routeFrom.remove(swapA);    // Remove vertex from the road
 
                 // Place vertex swapA on the better position
@@ -278,7 +279,7 @@ public class TabuSearch implements Algorithm {
 
             // If swap was the best decision
             if (strategy == Strategy.SWAP){
-                tabu.setupSwapDelays(routeFrom, routeTo, swapA, swapB, horizon);
+                tabu.setupSwapDelays(routeFrom, routeTo, swapA, swapB, horizon, distance);
                 Vertex swapVertexB = routeTo.get(swapB);
                 routeTo.set(swapB, swapVertex);
                 routeFrom.set(swapA, swapVertexB);

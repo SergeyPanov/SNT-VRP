@@ -26,8 +26,8 @@ public class Solution {
     /**
      * Execute TabuSearch
      */
-    public void tabuSearch(int numberOfIters, int horizon) {
-        TabuSearch tabuSearch = new TabuSearch( numberOfIters, horizon);
+    public void tabuSearch(int numberOfIters, int horizon, int distance) {
+        TabuSearch tabuSearch = new TabuSearch( numberOfIters, horizon, distance);
         environment = tabuSearch.execute(environment);
 
     }

@@ -18,6 +18,7 @@ public class Parameters {
     private boolean isGraph;
 
     private int horizon = 10;
+    private int distance = 5;
 
     public Parameters(){
         Option optionPath = new Option("p", true, "Path to the file.");
@@ -25,12 +26,14 @@ public class Parameters {
         Option optionIters = new Option("i", true, "Set amount of iterations for Tabu Search");
         Option optionGraph = new Option("g", false, "Plot graph if needed.");
         Option optionHorizon = new Option("h", true, "Set initial horizon.");
+        Option optionDistance = new Option("d", true, "Right bound of horizon will be horizon + distance.");
 
         options.addOption(optionGraph);
         options.addOption(optionPath);
         options.addOption(optionCmp);
         options.addOption(optionIters);
         options.addOption(optionHorizon);
+        options.addOption(optionDistance);
     }
 
     public void parse(String[] args){
@@ -50,6 +53,7 @@ public class Parameters {
         isGraph = cmd.hasOption("g");
         iterations = cmd.getOptionValue("i") == null ? 300 : Integer.parseInt(cmd.getOptionValue("i"));
         horizon = cmd.getOptionValue("h") == null ? 10 : Integer.parseInt(cmd.getOptionValue("h"));
+        distance = cmd.getOptionValue("d") == null ? 5 : Integer.parseInt(cmd.getOptionValue("d"));
 
     }
 
@@ -73,5 +77,9 @@ public class Parameters {
 
     public int getHorizon() {
         return horizon;
+    }
+
+    public int getDistance() {
+        return distance;
     }
 }

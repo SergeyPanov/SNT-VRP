@@ -33,7 +33,7 @@ public class Main {
             }
         }
 
-        solution.tabuSearch(  params.getIterations(), params.getHorizon());
+        solution.tabuSearch(  params.getIterations(), params.getHorizon(), params.getDistance());
         solution.printBestRoute();
 
         if (params.isGraph()){
