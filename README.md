@@ -54,7 +54,7 @@ Each instance is an XML document described topology.
 Each instance defines:
 1. set of nodes and their locations
 2. characteristics of vehicles
-3. demand of each nodes(customers)
+3. demand of each nodes
 
 The [VRP-REP](http://www.vrp-rep.org) was used as source of data.
 
@@ -75,4 +75,8 @@ First of all script compile the source code using `mvn packge`(check [this](#Com
 Basically script can be ran with default parameters from default directory which is `src/test/`, no need to change them.
 
 After completing the file `summarize.txt` contains description of experiment's conditions. 
- 
+
+
+
+# Results of experiments
+Because of restrictions on submitted archive results of experiments can be found on google drive [here](https://drive.google.com/file/d/1vP_lmZc5K1hn4WHfW6IW5ZZW3zkYO8Rn/view?usp=sharing).
