@@ -1,10 +1,10 @@
 # Description
-This is an academic project for subject SNT. The implemented program resolve Capacitated Vehicle Routing Problem [VRP](https://en.wikipedia.org/wiki/Vehicle_routing_problem).
+This is an academic project for subject SNT. The implemented program resolve Capacitated  [Vehicle Routing Problem](https://en.wikipedia.org/wiki/Vehicle_routing_problem).
 For resolving problem  ALNS and Tabu-search approaches were used. Implemented program works based on algorithm described in the article [A novel heuristic algorithm for capacitated vehicle routing problem](https://link.springer.com/content/pdf/10.1007%2Fs40092-017-0187-9.pdf)
 but with modifications inspire by article [A general heuristic for vehicle routing problems](https://www.sciencedirect.com/science/article/pii/S0305054805003023).
 
-First step of described algorithm was replace by simple [greedy search](https://en.wikipedia.org/wiki/Greedy_algorithm).
-Moreover strategy for looking better place for selected vertex was added. More details about it can be found in documentation [documentation](https://www.overleaf.com/read/tyjqkfzrxyvf)( Czech language).
+First step of suggested algorithm was replace by simple [greedy search](https://en.wikipedia.org/wiki/Greedy_algorithm).
+Moreover strategy for looking better place for selected vertex was added. More details about it can be found in  [documentation](https://www.overleaf.com/read/tyjqkfzrxyvf)( Czech language).
 
 # Compilation
 For compilation the [maven](https://maven.apache.org) was used, Java 1.8 is also required.
@@ -21,7 +21,7 @@ The program is ran by command `java -jar target/SNT-VRP-1.0-SNAPSHOT.jar -p path
 1. `-p path/to/instance.xml` defines path to problem instance which is supposed to be an XML file
 2. `-c` switch runs program in 'comparison' mode. The solution of the simple _greedy search_ algorithm will be also printed
 3. `-i I` set amount of iterations used as stop condition(default value is 300)
-4. `-g` switch plot the graph of the routes
+4. `-g` switch plots the graph of the routes
 5. `-h H` horizon defines the least amount of iterations while solution is placed in the Tabu-list
 6. `-d D` value `H + D` defines the most amount of iterations while solution is placed in the Tabu-list
 
