@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Tabu search implementation.
  */
-public class TabuSearch implements Algorithm {
+public class ModifiedNovelSearch implements Algorithm {
 
     private TabuList tabu;
     private int numberOfIters;
@@ -28,7 +28,7 @@ public class TabuSearch implements Algorithm {
 
     private int distance;
 
-    public TabuSearch(int numberOfIters, int horizon, int distance) {
+    public ModifiedNovelSearch(int numberOfIters, int horizon, int distance) {
         this.tabu = new TabuList();
         this.numberOfIters = numberOfIters;
         this.horizon = horizon;
@@ -176,7 +176,7 @@ public class TabuSearch implements Algorithm {
                 }
 
 
-                // Try to execute swap operation. Depot cant be swapped.
+                // Try to execute replace operation. Depot cant be swapped.
                 if (vechicleIndexFrom != vechicleIndexTo
                         && i != j && routeFrom.get(i).getId() != environment.getDEPO()
                         && routeTo.get(j).getId() != environment.getDEPO()
@@ -192,6 +192,7 @@ public class TabuSearch implements Algorithm {
 
                     double swapBestCost = getSwapNeighCost(routeFrom, routeTo, i, j);
 
+                    // Try to execute exchange operation. Depot cant be swapped.
                     if (swapBestCost < bestCostOfIteration){
 
                         bestCostOfIteration = swapBestCost;

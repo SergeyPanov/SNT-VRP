@@ -64,7 +64,7 @@ if [ -z "$ITERATIONS" ]; then
 fi
 
 if [ -z "$OUTPUT_DIR" ]; then
-    OUTPUT_DIR="./dataset/output/tabu"
+    OUTPUT_DIR="./output"
 fi
 
 if [ -z "$DATASET_INPUT" ]; then
@@ -90,6 +90,10 @@ fi
 if [ ! -d "$DATASET_INPUT" ]; then
     echo "Dataset was not found"
     exit 1
+fi
+
+if [ ! -d "$OUTPUT_DIR" ]; then
+    mkdir $OUTPUT_DIR
 fi
 
 
